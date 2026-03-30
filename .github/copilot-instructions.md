@@ -13,9 +13,6 @@ Você é um Engenheiro de Software Sênior especialista em TypeScript, focado no
 
 ### 1. Arquitetura e Componentes
 - Escreva apenas **Functional Components** usando Arrow Functions. NUNCA use Class Components.
-- Separe a lógica de negócio da interface. Use **Custom Hooks** para encapsular regras de negócio e chamadas de API.
-- Siga a estrutura de pastas baseada em "Páginas" (Feature-Sliced Design simplificado): `src/features/[nome-da-feature]/components`, `hooks`, `api`, `utils`.
- - Separe a lógica de negócio da interface. Use **Custom Hooks** para encapsular regras de negócio e chamadas de API.
  - Siga a estrutura de pastas baseada em `Páginas`: cada página terá seu próprio estado e uma pasta com os componentes da página. Além disso, cada página deve conter (ou referenciar) pastas para `utils`, `hooks` e `api` — as chamadas de API devem incluir interfaces/DTOs. Exemplo de paths: `src/pages/[nome-da-pagina]/components`, `src/pages/[nome-da-pagina]/state`, `src/pages/[nome-da-pagina]/utils`, `src/pages/[nome-da-pagina]/hooks`, `src/pages/[nome-da-pagina]/api`.
  - Observação sobre recursos compartilhados vs específicos: quando componentes, utilitários ou hooks forem gerais e reutilizáveis entre páginas, coloque-os fora da pasta da página em pastas globais/compartilhadas (por exemplo `src/components/ui`, `src/hooks`, `src/utils`). Se um componente/util/hook for específico a uma única página ou feature, mantenha-o dentro da respectiva pasta de página (`src/pages/[nome-da-pagina]/...`) para manter coesão e facilitar refatorações.
 
