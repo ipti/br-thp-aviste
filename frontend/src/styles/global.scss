@@ -1,0 +1,230 @@
+@use 'variables' as *;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  color: $color-gray-900;
+  background-color: $color-gray-50;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: $color-brand-dark;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-brand-darkest;
+  }
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  color: $color-gray-900;
+}
+
+p {
+  line-height: 1.6;
+}
+
+// ── Shared page utilities ─────────────────────────────────────────────────────
+.page-title {
+  font-size: $font-size-2xl;
+  font-weight: 700;
+  color: $color-gray-900;
+  margin-bottom: $spacing-1;
+}
+
+.page-subtitle {
+  font-size: $font-size-sm;
+  color: $color-gray-400;
+  margin-top: $spacing-1;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  margin-bottom: $spacing-6;
+
+  .page-title { flex: 1; margin-bottom: 0; }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-2;
+  }
+}
+
+.section-title {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: $color-gray-900;
+  margin-bottom: $spacing-4;
+}
+
+.loading-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-size: 2rem;
+  color: $color-brand-primary;
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-4 $spacing-5;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  margin-bottom: $spacing-6;
+
+  &--error {
+    background: $color-danger-bg;
+    border: 1px solid $color-danger-border;
+    color: $color-danger;
+  }
+}
+
+// PrimeReact overrides
+.p-component {
+  font-family: $font-family-base !important;
+}
+
+.p-inputtext {
+  border-color: $color-gray-300 !important;
+  border-radius: $radius-md !important;
+
+  &:focus {
+    border-color: $color-brand-primary !important;
+    box-shadow: 0 0 0 2px rgba($color-brand-primary, 0.2) !important;
+  }
+
+  &.p-invalid {
+    border-color: $color-danger !important;
+  }
+}
+
+.p-button {
+  border-radius: $radius-md !important;
+  font-weight: 600 !important;
+  transition: all $transition-normal !important;
+}
+
+.p-dropdown {
+  border-color: $color-gray-300 !important;
+  border-radius: $radius-md !important;
+
+  &.p-focus {
+    box-shadow: 0 0 0 2px rgba($color-brand-primary, 0.2) !important;
+    border-color: $color-brand-primary !important;
+  }
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: $color-gray-50 !important;
+  color: $color-gray-500 !important;
+  font-weight: 600 !important;
+  font-size: $font-size-sm !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-color: $color-gray-200 !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  &:hover {
+    background: $color-brand-lightest !important;
+  }
+
+  > td {
+    border-color: $color-gray-100 !important;
+    font-size: $font-size-sm !important;
+  }
+}
+
+.p-paginator {
+  background: transparent !important;
+  border: none !important;
+}
+
+.p-dialog .p-dialog-header {
+  border-bottom: 1px solid $color-gray-200 !important;
+}
+
+.p-dialog .p-dialog-footer {
+  border-top: 1px solid $color-gray-200 !important;
+}
+
+// Toast
+.p-toast {
+  width: min(92vw, 380px) !important;
+}
+
+.p-toast .p-toast-message {
+  margin: 0 0 $spacing-3 0 !important;
+  border-radius: $radius-lg !important;
+  border: 1px solid $color-gray-200 !important;
+  box-shadow: $shadow-md !important;
+}
+
+.p-toast .p-toast-message .p-toast-message-content {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: $spacing-3 !important;
+  padding: $spacing-4 !important;
+}
+
+.p-toast .p-toast-message .p-toast-summary {
+  display: block !important;
+  font-size: $font-size-sm !important;
+  font-weight: 700 !important;
+  margin-bottom: 2px !important;
+  line-height: 1.2 !important;
+}
+
+.p-toast .p-toast-message .p-toast-detail {
+  display: block !important;
+  font-size: $font-size-sm !important;
+  line-height: 1.45 !important;
+  margin: 0 !important;
+}
+
+.p-toast .p-toast-message .p-toast-icon-close {
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  margin-left: $spacing-2 !important;
+  border-radius: $radius-full !important;
+}

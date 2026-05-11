@@ -1,0 +1,90 @@
+import { useFormik } from 'formik';
+import { Select } from '../../../../components/ui/Select';
+import { Button } from '../../../../components/ui/Button';
+
+const ACUIDADE = [
+  { label: '1', value: '1' }, { label: '2', value: '2' }, { label: '3', value: '3' },
+  { label: '4', value: '4' }, { label: '5', value: '5' }, { label: '6', value: '6' },
+  { label: '7', value: '7' }, { label: '8', value: '8' }, { label: 'Nenhum', value: 'nenhum' },
+];
+
+const PASSOU_FALHOU = [
+  { label: 'Passou', value: '0' },
+  { label: 'Falhou', value: '1' },
+];
+
+interface Props {
+  onNext: (data: Record<string, unknown>) => void;
+  loading?: boolean;
+  initial: Record<string, unknown>;
+}
+
+export const StepScreening = ({ onNext, loading, initial }: Props) => {
+  const formik = useFormik({
+    initialValues: {
+      acuidade_triagem_direito: (initial.acuidade_triagem_direito as string) ?? '8',
+      acuidade_triagem_esquerdo: (initial.acuidade_triagem_esquerdo as string) ?? '8',
+      test_cover: (initial.test_cover as string) ?? '0',
+      test_movimento_ocular: (initial.test_movimento_ocular as string) ?? '0',
+      test_mancha_branca: (initial.test_mancha_branca as string) ?? '0',
+    },
+    onSubmit: (values) => onNext(values as unknown as Record<string, unknown>),
+  });
+
+  return (
+    <form onSubmit={formik.handleSubmit} noValidate className="wizard-step">
+      <h2 className="wizard-step__title">Triagem Visual</h2>
+
+      <div className="wizard-step__section">
+        <p className="wizard-step__section-title">Acuidade Visual</p>
+        <div className="wizard-step__grid">
+          <Select
+            id="acuidade_direito"
+            label="Olho direito"
+            value={formik.values.acuidade_triagem_direito}
+            onChange={(v) => formik.setFieldValue('acuidade_triagem_direito', v)}
+            options={ACUIDADE}
+          />
+          <Select
+            id="acuidade_esquerdo"
+            label="Olho esquerdo"
+            value={formik.values.acuidade_triagem_esquerdo}
+            onChange={(v) => formik.setFieldValue('acuidade_triagem_esquerdo', v)}
+            options={ACUIDADE}
+          />
+        </div>
+      </div>
+
+      <div className="wizard-step__section">
+        <p className="wizard-step__section-title">Testes</p>
+        <div className="wizard-step__grid">
+          <Select
+            id="test_cover"
+            label="Teste cover"
+            value={formik.values.test_cover}
+            onChange={(v) => formik.setFieldValue('test_cover', v)}
+            options={PASSOU_FALHOU}
+          />
+          <Select
+            id="test_movimento"
+            label="Movimento ocular"
+            value={formik.values.test_movimento_ocular}
+            onChange={(v) => formik.setFieldValue('test_movimento_ocular', v)}
+            options={PASSOU_FALHOU}
+          />
+          <Select
+            id="test_mancha"
+            label="Mancha branca"
+            value={formik.values.test_mancha_branca}
+            onChange={(v) => formik.setFieldValue('test_mancha_branca', v)}
+            options={PASSOU_FALHOU}
+          />
+        </div>
+      </div>
+
+      <div className="wizard-step__footer">
+        <Button label="Finalizar Matrícula" type="submit" loading={loading} fullWidth size="lg" />
+      </div>
+    </form>
+  );
+};

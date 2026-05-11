@@ -1,0 +1,192 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+// ── App Layout ────────────────────────────────────────────────────────────────
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+
+  &__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__content {
+    flex: 1;
+    padding: $content-padding;
+    overflow-y: auto;
+    min-height: 0;
+
+    @include respond-to('md') {
+      padding: $spacing-4;
+    }
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.app-header {
+  @include flex-between;
+  height: $header-height;
+  padding: 0 $spacing-6;
+  background: $color-white;
+  border-bottom: 1px solid $color-gray-200;
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+
+  @include respond-to('md') {
+    padding: 0 $spacing-4;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: $color-gray-500;
+    font-size: 1.25rem;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: background $transition-fast, color $transition-fast;
+
+    &:hover {
+      background: $color-gray-100;
+      color: $color-gray-900;
+    }
+
+    @include respond-to('md') {
+      display: flex;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    width: 120px;
+  }
+
+  &__right {
+    @include flex-center;
+    gap: $spacing-4;
+  }
+
+  &__avatar {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-full;
+    background: $color-brand-primary;
+    color: $color-white;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background $transition-normal;
+
+    &:hover {
+      background: $color-brand-dark;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+.app-sidebar {
+  width: $sidebar-width;
+  background: $color-white;
+  border-right: 1px solid $color-gray-200;
+  padding: $spacing-6 0;
+  flex-shrink: 0;
+  height: calc(100vh - #{$header-height});
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: transform $transition-normal;
+
+  @include respond-to('md') {
+    position: fixed;
+    top: $header-height;
+    left: 0;
+    bottom: 0;
+    z-index: $z-sidebar;
+    transform: translateX(-100%);
+    box-shadow: $shadow-lg;
+
+    &--open {
+      transform: translateX(0);
+    }
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+    padding: 0 $spacing-3;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-4;
+    border-radius: $radius-md;
+    color: $color-gray-500;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background $transition-fast, color $transition-fast;
+
+    .pi {
+      font-size: 1rem;
+    }
+
+    &:hover {
+      background: $color-brand-lightest;
+      color: $color-brand-dark;
+    }
+
+    &--active {
+      background: $color-brand-lightest;
+      color: $color-brand-primary;
+      font-weight: 600;
+
+      .pi {
+        color: $color-brand-primary;
+      }
+    }
+  }
+
+  &__backdrop {
+    display: none;
+
+    @include respond-to('md') {
+      display: block;
+      position: fixed;
+      inset: 0;
+      top: $header-height;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: calc(#{$z-sidebar} - 1);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $transition-normal;
+
+      &--visible {
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
+}

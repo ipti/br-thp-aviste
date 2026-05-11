@@ -1,0 +1,63 @@
+@use '../../styles/variables' as *;
+
+.reports-page {
+  &__kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: $spacing-4;
+    margin-bottom: $spacing-8;
+  }
+
+  &__kpi-card {
+    background: $color-white;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-lg;
+    padding: $spacing-5;
+    text-align: center;
+    box-shadow: $shadow-sm;
+  }
+
+  &__kpi-value {
+    font-size: $font-size-3xl;
+    font-weight: 700;
+    color: $color-brand-primary;
+    line-height: 1;
+    margin-bottom: $spacing-2;
+  }
+
+  &__kpi-label {
+    font-size: $font-size-xs;
+    color: $color-gray-500;
+    font-weight: 500;
+  }
+
+  &__section {
+    margin-bottom: $spacing-10;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $spacing-4;
+    margin-bottom: $spacing-4;
+  }
+
+  &__section-title {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $color-gray-900;
+    margin-bottom: $spacing-1;
+  }
+
+  &__section-sub {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+  }
+
+  &__section-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: $spacing-3;
+  }
+}

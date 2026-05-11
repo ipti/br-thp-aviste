@@ -1,0 +1,154 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TRIADOR
+  MEDICO
+}
+
+model users {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(150)
+  username  String   @unique @db.VarChar(32)
+  password  String   @db.VarChar(60)
+  active    Boolean  @default(true)
+  role      Role     @default(TRIADOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model school {
+  id        Int           @id @default(autoincrement())
+  name      String        @db.VarChar(200)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  classrooms  classroom[]
+  students    student_data[]
+
+  @@map("school")
+}
+
+model classroom {
+  id        Int            @id @default(autoincrement())
+  name      String         @db.VarChar(200)
+  year      String?        @db.VarChar(10)
+  school_fk Int
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  school   school         @relation(fields: [school_fk], references: [id], onDelete: Cascade)
+  students student_data[]
+
+  @@map("classroom")
+}
+
+model student_data {
+  id           Int @id @default(autoincrement())
+  classroom_fk Int
+  school_fk    Int
+
+  // Dados pessoais
+  name       String   @db.VarChar(200)
+  birthday   String   @db.VarChar(10)  // DD/MM/YYYY
+  cpf        String?  @db.VarChar(14)
+  sex        Int      @db.SmallInt     // 0=M 1=F
+  color_race Int      @db.SmallInt     // 0-5
+  zone       Int      @db.SmallInt     // 0=Urbana 1=Rural
+  deficiency Boolean  @default(false)
+  turno      String?  @db.VarChar(20)  // Manhã|Tarde|Noite|Integral
+  permission Boolean  @default(false)
+
+  // Questionário dos pais
+  filho_oculos                    String? @db.VarChar(1)  // "0"|"1"
+  horas_uso_aparelhos_eletronicos Int?    @db.SmallInt    // 1-5
+  horas_atividades_ao_ar_livre    Int?    @db.SmallInt    // 1-4
+
+  // Sintomas da criança
+  dificuldade_quadro    Boolean @default(false)
+  dificuldade_livro     Boolean @default(false)
+  olho_torto_constante  Boolean @default(false)
+  olho_torto_momentos   Boolean @default(false)
+  rosto_aperta_olhos    Boolean @default(false)
+  tremor_olhos          Boolean @default(false)
+  mancha_branca_pupila  Boolean @default(false)
+
+  // Doenças oculares
+  olho_preguicoso        Boolean @default(false)
+  olho_torto_doenca      Boolean @default(false)
+  catarata_infancia      Boolean @default(false)
+  glaucoma_congenito     Boolean @default(false)
+  tumor_olhos            Boolean @default(false)
+  ceratocone_transplante Boolean @default(false)
+  palpebra_caida         Boolean @default(false)
+
+  // Histórico familiar
+  miopia_ambos_pais          Boolean @default(false)
+  miopia_um_pai              Boolean @default(false)
+  hipermetropia_astigmatismo Boolean @default(false)
+  estrabismo                 Boolean @default(false)
+  catarata_glaucoma          Boolean @default(false)
+  olho_preguicoso_familiar   Boolean @default(false)
+  tumor_olho_familiar        Boolean @default(false)
+
+  // Condições médicas gerais
+  prematuridade              Boolean @default(false)
+  sindrome_down              Boolean @default(false)
+  paralisia_tumor_cerebral   Boolean @default(false)
+  outras_sindromes_geneticas Boolean @default(false)
+  diabetes                   Boolean @default(false)
+  artrite_artrose            Boolean @default(false)
+  alergias_corticoides       Boolean @default(false)
+
+  // Triagem visual
+  acuidade_triagem_direito  String? @db.VarChar(10) // "1"-"8" | "nenhum"
+  acuidade_triagem_esquerdo String? @db.VarChar(10)
+  test_cover                String? @db.VarChar(1)  // "0"=passou | "1"=falhou
+  test_movimento_ocular     String? @db.VarChar(1)
+  test_mancha_branca        String? @db.VarChar(1)
+
+  // Receita de óculos
+  receita_esferico_od   String? @db.VarChar(20)
+  receita_cilindrico_od String? @db.VarChar(20)
+  receita_eixo_od       String? @db.VarChar(20)
+  receita_esferico_oe   String? @db.VarChar(20)
+  receita_cilindrico_oe String? @db.VarChar(20)
+  receita_eixo_oe       String? @db.VarChar(20)
+  receita_adicao        String? @db.VarChar(20)
+  receita_dp            String? @db.VarChar(20)
+
+  // Dados da consulta médica
+  data_consulta String? @db.VarChar(20)
+  crm_medico    String? @db.VarChar(50)
+  nome_medico   String? @db.VarChar(200)
+
+  // Dados da entrega de óculos
+  data_entrega_oculos        String? @db.VarChar(20)
+  responsavel_entrega_oculos String? @db.VarChar(200)
+
+  // Pontuação e status do fluxo
+  points                      Float   @default(0)
+  questionario_pais_concluido Boolean @default(false)
+  triagem_concluida           Boolean @default(false)
+  receita_oculos_concluida    Boolean @default(false)
+  consulta_concluida          Boolean @default(false)
+  entrega_oculos_concluida    Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  classroom classroom @relation(fields: [classroom_fk], references: [id], onDelete: Cascade)
+  school    school    @relation(fields: [school_fk], references: [id], onDelete: NoAction)
+
+  @@map("student_data")
+}

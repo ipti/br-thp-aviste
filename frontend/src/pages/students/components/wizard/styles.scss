@@ -1,0 +1,168 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+.wizard {
+  max-width: 640px;
+  margin: 0 auto;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-4;
+    margin-bottom: $spacing-8;
+  }
+
+  &__steps {
+    display: flex;
+    gap: $spacing-6;
+    flex-wrap: wrap;
+  }
+
+  &__step {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    opacity: 0.35;
+
+    &--active {
+      opacity: 1;
+
+      .wizard__step-dot {
+        background: $color-brand-primary;
+        transform: scale(1.3);
+      }
+
+      .wizard__step-label {
+        color: $color-brand-dark;
+        font-weight: 600;
+      }
+    }
+
+    &--done {
+      opacity: 0.7;
+
+      .wizard__step-dot {
+        background: $color-brand-light;
+      }
+    }
+  }
+
+  &__step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: $radius-full;
+    background: $color-gray-300;
+    transition: all $transition-normal;
+  }
+
+  &__step-label {
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+  }
+
+  &__body {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__watermark {
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16rem;
+    color: rgba($color-brand-light, 0.15);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+// ── Wizard step shared ────────────────────────────────────────────────────────
+.wizard-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: 700;
+    color: $color-gray-900;
+  }
+
+  &__desc {
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    line-height: 1.7;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-5;
+
+    @include respond-to('md') {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+
+  &__section-title {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-brand-primary;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__checklist {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  &__check-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    color: $color-gray-700;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      accent-color: $color-brand-primary;
+      cursor: pointer;
+    }
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-3;
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+    cursor: pointer;
+    line-height: 1.5;
+
+    input[type='checkbox'] {
+      width: 18px;
+      height: 18px;
+      accent-color: $color-brand-primary;
+      cursor: pointer;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__footer {
+    padding-top: $spacing-4;
+  }
+}

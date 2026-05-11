@@ -1,0 +1,134 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.school-list,
+.school-detail {
+  max-width: 1200px;
+}
+
+.school-list__grid,
+.classroom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-4;
+  margin-top: $spacing-6;
+}
+
+// ── School card ───────────────────────────────────────────────────────────────
+.school-card {
+  background: $color-white;
+  border: 1.5px solid $color-gray-200;
+  border-radius: $radius-lg;
+  padding: $spacing-4;
+  cursor: pointer;
+  transition: box-shadow $transition-fast, border-color $transition-fast;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: $color-brand-light;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.75rem;
+    border-radius: $radius-full;
+    background: $color-brand-lightest;
+    color: $color-brand-primary;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid $color-brand-light;
+  }
+
+  &__delete {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: $color-gray-400;
+    cursor: pointer;
+    padding: 0 $spacing-1;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-danger;
+    }
+  }
+
+  &__body {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__icon-wrap {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
+    background: $color-brand-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi {
+      font-size: 1.125rem;
+      color: $color-white;
+    }
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: $font-size-base;
+    color: $color-gray-900;
+  }
+}
+
+// ── Classroom card ────────────────────────────────────────────────────────────
+.classroom-card {
+  &__name {
+    font-weight: 600;
+    font-size: $font-size-base;
+    color: $color-gray-900;
+  }
+
+  &__school {
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    margin-bottom: $spacing-1;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+    margin-bottom: $spacing-3;
+  }
+}
+
+// ── Back button ───────────────────────────────────────────────────────────────
+.btn-back {
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  background: $color-gray-100;
+  border: none;
+  color: $color-gray-500;
+  cursor: pointer;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover {
+    background: $color-brand-lightest;
+    color: $color-brand-dark;
+  }
+}

@@ -1,0 +1,226 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ── Classroom list page ───────────────────────────────────────────────────────
+.classroom-list {
+  max-width: 1200px;
+
+  &__filter {
+    margin-top: $spacing-4;
+    margin-bottom: $spacing-6;
+  }
+
+  &__filter-hint {
+    margin: 0 0 $spacing-2;
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    font-weight: 600;
+  }
+
+  &__select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 0.6rem 2.5rem 0.6rem 1rem;
+    font-size: $font-size-sm;
+    font-family: $font-family-base;
+    color: $color-gray-700;
+    background: $color-white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300B4D8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 0.875rem center;
+    border: 1.5px solid $color-gray-300;
+    border-radius: $radius-full;
+    min-width: 220px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &:focus {
+      border-color: $color-brand-primary;
+      box-shadow: 0 0 0 3px rgba($color-brand-primary, 0.15);
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-4;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+    margin-top: $spacing-12;
+    color: $color-gray-400;
+
+    .pi {
+      font-size: 2.5rem;
+    }
+
+    p {
+      font-size: $font-size-base;
+    }
+
+    &-hint {
+      font-size: $font-size-sm;
+      color: $color-gray-400;
+
+      strong {
+        color: $color-brand-primary;
+      }
+    }
+  }
+}
+
+// ── Classroom detail ──────────────────────────────────────────────────────────
+.classroom-detail {
+  max-width: 1200px;
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $color-brand-primary;
+    margin: 0;
+  }
+}
+
+// ── Student grid ──────────────────────────────────────────────────────────────
+.student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-4;
+  margin-top: $spacing-4;
+}
+
+.student-card {
+  background: $color-white;
+  border: 1.5px solid $color-gray-200;
+  border-radius: $radius-lg;
+  padding: $spacing-4 $spacing-5;
+  cursor: pointer;
+  transition: box-shadow $transition-fast, border-color $transition-fast;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: $color-brand-light;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-gray-700;
+  }
+
+  &__delete {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: $color-gray-400;
+    cursor: pointer;
+    padding: 0 $spacing-1;
+    transition: color $transition-fast;
+
+    &:hover { color: $color-danger; }
+  }
+
+  &__body {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-full;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi { font-size: 1rem; color: $color-white; }
+
+    &--green  { background: $color-success; }
+    &--yellow { background: #F59E0B; }
+    &--red    { background: $color-danger; }
+  }
+
+  &__name {
+    font-size: $font-size-base;
+    font-weight: 500;
+    color: $color-gray-900;
+  }
+}
+
+// ── Classroom card ────────────────────────────────────────────────────────────
+.classroom-card {
+  background: $color-white;
+  border: 1.5px solid $color-gray-200;
+  border-radius: $radius-lg;
+  padding: $spacing-4 $spacing-5;
+  cursor: pointer;
+  transition: box-shadow $transition-fast, border-color $transition-fast;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: $color-brand-light;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing-2;
+  }
+
+  &__name {
+    font-weight: 700;
+    font-size: $font-size-base;
+    color: $color-gray-900;
+    margin: 0;
+  }
+
+  &__delete {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: $color-gray-400;
+    cursor: pointer;
+    padding: 0 $spacing-1;
+    flex-shrink: 0;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-danger;
+    }
+  }
+
+  &__school {
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    margin: 0;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    margin-top: $spacing-2;
+    padding: 0.2rem 0.875rem;
+    border-radius: $radius-full;
+    background: $color-brand-primary;
+    color: $color-white;
+    font-size: $font-size-xs;
+    font-weight: 600;
+  }
+}

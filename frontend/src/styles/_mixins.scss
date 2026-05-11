@@ -1,0 +1,39 @@
+@use 'variables' as *;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin focus-ring {
+  outline: 2px solid $color-brand-primary;
+  outline-offset: 2px;
+}
+
+@mixin card {
+  background: $color-white;
+  border: 1px solid $color-gray-200;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin respond-to($bp) {
+  @if $bp == 'md' {
+    @media (max-width: 768px) { @content; }
+  } @else if $bp == 'lg' {
+    @media (max-width: 1024px) { @content; }
+  }
+}

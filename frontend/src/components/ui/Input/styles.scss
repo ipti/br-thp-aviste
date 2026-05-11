@@ -1,0 +1,40 @@
+@use '../../../styles/variables' as *;
+
+.ui-input {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $color-gray-700;
+  }
+
+  &__required {
+    color: $color-danger;
+    margin-left: 2px;
+  }
+
+  &__error {
+    font-size: $font-size-xs;
+    color: $color-danger;
+  }
+
+  .p-inputtext {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: $font-size-sm;
+    color: $color-gray-900;
+
+    &::placeholder {
+      color: $color-gray-400;
+    }
+
+    &:disabled {
+      background: $color-gray-100;
+      color: $color-gray-500;
+      cursor: not-allowed;
+    }
+  }
+}

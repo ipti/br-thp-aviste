@@ -1,0 +1,9 @@
+/* estilos globais em src/styles/global.scss */
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+}

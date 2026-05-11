@@ -1,0 +1,21 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.ui-card {
+  @include card;
+  padding: $spacing-6;
+  transition: box-shadow $transition-normal, border-color $transition-normal;
+
+  &--clickable {
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: $shadow-md;
+      border-color: $color-brand-primary;
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+}

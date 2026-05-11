@@ -1,0 +1,160 @@
+@use '../../../styles/variables' as *;
+
+.ui-table {
+  background: $color-white;
+  border: 1px solid $color-gray-200;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+
+  &__wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: $font-size-sm;
+  }
+
+  thead tr {
+    background: $color-gray-50;
+    border-bottom: 2px solid $color-gray-200;
+  }
+
+  th {
+    padding: $spacing-3 $spacing-5;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    color: $color-gray-500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $color-gray-100;
+    transition: background $transition-fast;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  td {
+    padding: $spacing-4 $spacing-5;
+    color: $color-gray-700;
+    vertical-align: middle;
+  }
+
+  &__row--clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: $color-brand-lightest;
+    }
+  }
+
+  // ── Skeleton ───────────────────────────────────────────────────────────────
+  &__skeleton-row td {
+    padding: $spacing-4 $spacing-5;
+  }
+
+  &__skeleton {
+    display: block;
+    height: 14px;
+    border-radius: $radius-sm;
+    background: linear-gradient(90deg, $color-gray-100 25%, $color-gray-200 50%, $color-gray-100 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s infinite;
+    width: 70%;
+
+    &:nth-child(odd) { width: 50%; }
+  }
+
+  @keyframes skeleton-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  // ── Empty state ────────────────────────────────────────────────────────────
+  &__empty {
+    padding: $spacing-12 $spacing-6 !important;
+    text-align: center !important;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-3;
+
+    i {
+      font-size: 2rem;
+      color: $color-gray-300;
+    }
+
+    span {
+      color: $color-gray-400;
+      font-size: $font-size-sm;
+    }
+  }
+
+  // ── Pagination ─────────────────────────────────────────────────────────────
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-3 $spacing-5;
+    border-top: 1px solid $color-gray-100;
+    background: $color-gray-50;
+  }
+
+  &__pagination-info {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+  }
+
+  &__pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+  }
+
+  &__page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 $spacing-2;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+    background: $color-white;
+    color: $color-gray-700;
+    font-size: $font-size-xs;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all $transition-fast;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+      background: $color-brand-lightest;
+      border-color: $color-brand-primary;
+      color: $color-brand-dark;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &--active {
+      background: $color-brand-dark;
+      border-color: $color-brand-dark;
+      color: $color-white;
+
+      &:hover {
+        background: $color-brand-dark !important;
+        color: $color-white !important;
+      }
+    }
+  }
+}

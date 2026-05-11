@@ -1,0 +1,24 @@
+@use '../../../styles/variables' as *;
+
+.ui-modal {
+  .p-dialog-header {
+    padding: $spacing-6 !important;
+
+    .p-dialog-title {
+      font-size: $font-size-lg;
+      font-weight: 600;
+      color: $color-gray-900;
+    }
+  }
+
+  .p-dialog-content {
+    padding: $spacing-6 !important;
+  }
+
+  .p-dialog-footer {
+    padding: $spacing-4 $spacing-6 !important;
+    display: flex;
+    gap: $spacing-3;
+    justify-content: flex-end;
+  }
+}

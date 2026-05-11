@@ -1,0 +1,230 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  // ── Background photo ──────────────────────────────────────────────────────
+  &__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 0;
+  }
+
+  // ── Teal color overlay ────────────────────────────────────────────────────
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      145deg,
+      rgba($color-brand-darkest, 0.82) 0%,
+      rgba($color-brand-primary, 0.65) 100%
+    );
+    z-index: 1;
+  }
+
+  // ── Repeating lupa-icon pattern ───────────────────────────────────────────
+  &__pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    align-content: space-around;
+    padding: $spacing-4;
+    pointer-events: none;
+    opacity: 0.18;
+
+    @include respond-to('md') {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  &__pattern-icon {
+    width: 48px;
+    height: 56px;
+    margin: auto;
+  }
+
+  // ── Centered card ─────────────────────────────────────────────────────────
+  &__card {
+    position: relative;
+    z-index: 10;
+    background: $color-white;
+    border-radius: 24px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+    padding: $spacing-10 $spacing-8;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-3;
+    margin: $spacing-6;
+
+    @include respond-to('sm') {
+      padding: $spacing-8 $spacing-5;
+      margin: $spacing-4;
+    }
+  }
+
+  // ── Logo ──────────────────────────────────────────────────────────────────
+  &__logo {
+    width: 180px;
+    height: auto;
+    margin-bottom: $spacing-1;
+  }
+
+  &__welcome {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $color-brand-primary;
+    margin: 0 0 $spacing-2;
+    text-align: center;
+  }
+
+  // ── Form ──────────────────────────────────────────────────────────────────
+  &__form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+  }
+
+  &__error {
+    color: $color-danger;
+    font-size: $font-size-sm;
+    text-align: center;
+    margin: 0;
+  }
+
+  // ── Forgot password ───────────────────────────────────────────────────────
+  &__forgot {
+    background: none;
+    border: none;
+    color: $color-brand-primary;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    padding: 0;
+    margin-top: $spacing-1;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // ── Divider ───────────────────────────────────────────────────────────────
+  &__divider {
+    width: 100%;
+    height: 1px;
+    background: $color-gray-100;
+    margin: $spacing-1 0;
+  }
+
+  // ── No access button ──────────────────────────────────────────────────────
+  &__no-access {
+    background: none;
+    border: 1.5px solid $color-brand-primary;
+    border-radius: $radius-full;
+    padding: 0.4rem 1.25rem;
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    strong {
+      color: $color-brand-primary;
+      font-weight: 600;
+    }
+
+    &:hover {
+      background: $color-brand-lightest;
+    }
+  }
+}
+
+// ── Native login fields ───────────────────────────────────────────────────────
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-1;
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $color-gray-700;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: $font-size-base;
+    font-family: $font-family-base;
+    color: $color-gray-900;
+    background: $color-white;
+    border: 1.5px solid $color-gray-300;
+    border-radius: $radius-md;
+    outline: none;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $color-gray-400;
+    }
+
+    &:focus {
+      border-color: $color-brand-primary;
+      box-shadow: 0 0 0 3px rgba($color-brand-primary, 0.15);
+    }
+
+    &--error {
+      border-color: $color-danger;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba($color-danger, 0.15);
+      }
+    }
+  }
+
+  &__password-wrap {
+    position: relative;
+
+    .login-field__input {
+      padding-right: 3rem;
+    }
+  }
+
+  &__eye {
+    position: absolute;
+    right: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $color-gray-400;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-brand-primary;
+    }
+  }
+
+  &__error {
+    font-size: $font-size-xs;
+    color: $color-danger;
+  }
+}

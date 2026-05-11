@@ -1,0 +1,35 @@
+@use '../../../styles/variables' as *;
+
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.75rem;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: 600;
+
+  &--primary {
+    background: $color-brand-primary;
+    color: $color-white;
+  }
+
+  &--success {
+    background: rgba($color-success, 0.15);
+    color: darken($color-success, 15%);
+  }
+
+  &--warning {
+    background: rgba($color-warning, 0.15);
+    color: darken($color-warning, 20%);
+  }
+
+  &--danger {
+    background: $color-danger-bg;
+    color: $color-danger;
+  }
+
+  &--neutral {
+    background: $color-gray-100;
+    color: $color-gray-500;
+  }
+}
