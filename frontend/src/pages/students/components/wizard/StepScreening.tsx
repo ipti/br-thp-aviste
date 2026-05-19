@@ -12,6 +12,10 @@ const PASSOU_FALHOU = [
   { label: 'Passou', value: '0' },
   { label: 'Falhou', value: '1' },
 ];
+const SIM_NAO = [
+  { label: 'Não', value: '0' },
+  { label: 'Sim', value: '1' },
+];
 
 interface Props {
   onNext: (data: Record<string, unknown>) => void;
@@ -27,6 +31,7 @@ export const StepScreening = ({ onNext, loading, initial }: Props) => {
       test_cover: (initial.test_cover as string) ?? '0',
       test_movimento_ocular: (initial.test_movimento_ocular as string) ?? '0',
       test_mancha_branca: (initial.test_mancha_branca as string) ?? '0',
+      atendimento_oftalmologico_previo: (initial.atendimento_oftalmologico_previo as string) ?? '0',
     },
     onSubmit: (values) => onNext(values as unknown as Record<string, unknown>),
   });
@@ -51,6 +56,19 @@ export const StepScreening = ({ onNext, loading, initial }: Props) => {
             value={formik.values.acuidade_triagem_esquerdo}
             onChange={(v) => formik.setFieldValue('acuidade_triagem_esquerdo', v)}
             options={ACUIDADE}
+          />
+        </div>
+      </div>
+
+      <div className="wizard-step__section">
+        <p className="wizard-step__section-title">Histórico</p>
+        <div className="wizard-step__grid">
+          <Select
+            id="atendimento_oftalmologico_previo"
+            label="Já teve algum atendimento oftalmológico antes?"
+            value={formik.values.atendimento_oftalmologico_previo}
+            onChange={(v) => formik.setFieldValue('atendimento_oftalmologico_previo', v)}
+            options={SIM_NAO}
           />
         </div>
       </div>

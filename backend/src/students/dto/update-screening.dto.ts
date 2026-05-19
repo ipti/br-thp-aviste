@@ -23,4 +23,8 @@ export class UpdateScreeningDto {
   @ApiProperty({ description: '"0"=Passou, "1"=Falhou' })
   @IsIn(['0', '1'])
   test_mancha_branca: string;
+
+  @ApiProperty({ description: '"0"=Não, "1"=Sim' })
+  @IsIn(['0', '1'])
+  atendimento_oftalmologico_previo: string;
 }

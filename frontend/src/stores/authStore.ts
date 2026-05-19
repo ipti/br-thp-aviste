@@ -8,6 +8,7 @@ export interface AuthUser {
   name: string;
   username: string;
   role: UserRole;
+  schoolIds: number[];
 }
 
 interface AuthStore {

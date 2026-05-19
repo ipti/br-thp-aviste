@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { student_data } from '@prisma/client';
+﻿import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Role, student_data } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { PointsService } from '../points/points.service';
+import { JwtPayload } from '../common/decorators/current-user.decorator';
+import { getAllowedSchoolIds } from '../common/access/school-access';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateConsultationDto } from './dto/update-consultation.dto';
 import { UpdateGlassesDeliveryDto } from './dto/update-glasses-delivery.dto';
@@ -17,41 +19,65 @@ export class StudentsService {
     private readonly pointsService: PointsService,
   ) {}
 
-  create(dto: CreateStudentDto): Promise<student_data> {
+  private async ensureSchoolAccess(user: JwtPayload, schoolId: number): Promise<void> {
+    if (user.role === Role.ADMIN) return;
+
+    const relation = await this.prisma.user_school.findFirst({
+      where: { user_fk: user.id, school_fk: schoolId },
+    });
+
+    if (!relation) throw new ForbiddenException('Acesso negado para esta escola');
+  }
+
+  async create(dto: CreateStudentDto, user: JwtPayload): Promise<student_data> {
+    await this.ensureSchoolAccess(user, dto.school_fk);
     return this.prisma.student_data.create({ data: dto });
   }
 
-  findAll(params: { classroomId?: number; schoolId?: number }): Promise<student_data[]> {
+  async findAll(
+    user: JwtPayload,
+    params: { classroomId?: number; schoolId?: number },
+  ): Promise<student_data[]> {
+    const allowedSchoolIds = await getAllowedSchoolIds(this.prisma, user);
+
+    if (allowedSchoolIds && params.schoolId && !allowedSchoolIds.includes(params.schoolId)) {
+      throw new ForbiddenException('Acesso negado para esta escola');
+    }
+
     return this.prisma.student_data.findMany({
       where: {
         ...(params.classroomId && { classroom_fk: params.classroomId }),
         ...(params.schoolId && { school_fk: params.schoolId }),
+        ...(allowedSchoolIds ? { school_fk: { in: allowedSchoolIds } } : {}),
       },
       orderBy: { name: 'asc' },
     });
   }
 
-  async findOne(id: number): Promise<student_data> {
+  async findOne(id: number, user: JwtPayload): Promise<student_data> {
     const student = await this.prisma.student_data.findUnique({ where: { id } });
     if (!student) throw new NotFoundException('Aluno não encontrado');
+
+    await this.ensureSchoolAccess(user, student.school_fk);
     return student;
   }
 
-  async update(id: number, dto: UpdateStudentDto): Promise<student_data> {
-    await this.findOne(id);
+  async update(id: number, dto: UpdateStudentDto, user: JwtPayload): Promise<student_data> {
+    const current = await this.findOne(id, user);
+    await this.ensureSchoolAccess(user, current.school_fk);
     return this.prisma.student_data.update({ where: { id }, data: dto });
   }
 
-  async updateQuestionnaire(id: number, dto: UpdateQuestionnaireDto): Promise<student_data> {
-    await this.findOne(id);
+  async updateQuestionnaire(id: number, dto: UpdateQuestionnaireDto, user: JwtPayload): Promise<student_data> {
+    await this.findOne(id, user);
     return this.prisma.student_data.update({
       where: { id },
       data: { ...dto, questionario_pais_concluido: true },
     });
   }
 
-  async updateScreening(id: number, dto: UpdateScreeningDto): Promise<student_data> {
-    await this.findOne(id);
+  async updateScreening(id: number, dto: UpdateScreeningDto, user: JwtPayload): Promise<student_data> {
+    await this.findOne(id, user);
     const updated = await this.prisma.student_data.update({
       where: { id },
       data: { ...dto, triagem_concluida: true },
@@ -60,24 +86,24 @@ export class StudentsService {
     return this.prisma.student_data.update({ where: { id }, data: { points } });
   }
 
-  async updatePrescription(id: number, dto: UpdatePrescriptionDto): Promise<student_data> {
-    await this.findOne(id);
+  async updatePrescription(id: number, dto: UpdatePrescriptionDto, user: JwtPayload): Promise<student_data> {
+    await this.findOne(id, user);
     return this.prisma.student_data.update({
       where: { id },
       data: { ...dto, receita_oculos_concluida: true },
     });
   }
 
-  async updateConsultation(id: number, dto: UpdateConsultationDto): Promise<student_data> {
-    await this.findOne(id);
+  async updateConsultation(id: number, dto: UpdateConsultationDto, user: JwtPayload): Promise<student_data> {
+    await this.findOne(id, user);
     return this.prisma.student_data.update({
       where: { id },
       data: { ...dto, consulta_concluida: true },
     });
   }
 
-  async markGlassesDelivered(id: number, dto: UpdateGlassesDeliveryDto): Promise<student_data> {
-    await this.findOne(id);
+  async markGlassesDelivered(id: number, dto: UpdateGlassesDeliveryDto, user: JwtPayload): Promise<student_data> {
+    await this.findOne(id, user);
     return this.prisma.student_data.update({
       where: { id },
       data: {
@@ -88,8 +114,9 @@ export class StudentsService {
     });
   }
 
-  async remove(id: number): Promise<void> {
-    await this.findOne(id);
+  async remove(id: number, user: JwtPayload): Promise<void> {
+    await this.findOne(id, user);
     await this.prisma.student_data.delete({ where: { id } });
   }
 }
+

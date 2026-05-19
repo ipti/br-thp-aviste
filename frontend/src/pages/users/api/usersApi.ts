@@ -9,6 +9,7 @@ export interface User {
   role: UserRole;
   active: boolean;
   createdAt: string;
+  schoolIds: number[];
 }
 
 export interface CreateUserData {
@@ -23,5 +24,9 @@ export const usersApi = {
   create: (data: CreateUserData): Promise<User> => api.post<User>('/users', data).then((r) => r.data),
   update: (id: number, data: Partial<CreateUserData>): Promise<User> =>
     api.put<User>(`/users/${id}`, data).then((r) => r.data),
+  addSchool: (id: number, schoolId: number): Promise<User> =>
+    api.post<User>(`/users/${id}/schools`, { schoolId }).then((r) => r.data),
+  removeSchool: (id: number, schoolId: number): Promise<User> =>
+    api.delete<User>(`/users/${id}/schools/${schoolId}`).then((r) => r.data),
   remove: (id: number): Promise<void> => api.delete(`/users/${id}`).then(() => undefined),
 };

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../hooks/useAuth';
 import './styles.scss';
 import image from '../../../assets/logo.png';
@@ -10,8 +11,10 @@ interface Props {
 export const Header = ({ onMenuToggle }: Props) => {
   const { user, clearSession } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
+    queryClient.clear();
     clearSession();
     navigate('/login', { replace: true });
   };

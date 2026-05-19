@@ -23,6 +23,7 @@ model users {
   role      Role     @default(TRIADOR)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userSchools user_school[]
 
   @@map("users")
 }
@@ -35,8 +36,23 @@ model school {
 
   classrooms  classroom[]
   students    student_data[]
+  userSchools user_school[]
 
   @@map("school")
+}
+
+model user_school {
+  id        Int      @id @default(autoincrement())
+  user_fk   Int
+  school_fk Int
+  createdAt DateTime @default(now())
+
+  user   users  @relation(fields: [user_fk], references: [id], onDelete: Cascade)
+  school school @relation(fields: [school_fk], references: [id], onDelete: Cascade)
+
+  @@unique([user_fk, school_fk])
+  @@index([school_fk])
+  @@map("user_school")
 }
 
 model classroom {
@@ -116,6 +132,7 @@ model student_data {
   test_cover                String? @db.VarChar(1)  // "0"=passou | "1"=falhou
   test_movimento_ocular     String? @db.VarChar(1)
   test_mancha_branca        String? @db.VarChar(1)
+  atendimento_oftalmologico_previo String? @db.VarChar(1) // "0"=não | "1"=sim
 
   // Receita de óculos
   receita_esferico_od   String? @db.VarChar(20)

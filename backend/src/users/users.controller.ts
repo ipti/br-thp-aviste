@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+﻿import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -8,6 +8,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { AssignUserSchoolDto } from './dto/assign-user-school.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -46,6 +47,26 @@ export class UsersController {
     return this.usersService.update(id, dto);
   }
 
+  @Post(':id/schools')
+  @Roles(Role.ADMIN)
+  @ApiOkResponse({ type: UserResponseDto })
+  addSchool(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: AssignUserSchoolDto,
+  ): Promise<UserResponseDto> {
+    return this.usersService.addSchool(id, dto.schoolId);
+  }
+
+  @Delete(':id/schools/:schoolId')
+  @Roles(Role.ADMIN)
+  @ApiOkResponse({ type: UserResponseDto })
+  removeSchool(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('schoolId', ParseIntPipe) schoolId: number,
+  ): Promise<UserResponseDto> {
+    return this.usersService.removeSchool(id, schoolId);
+  }
+
   @Delete(':id')
   @Roles(Role.ADMIN)
   @HttpCode(204)
@@ -54,3 +75,4 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 }
+

@@ -12,6 +12,10 @@ const PASSOU_FALHOU = [
   { label: 'Passou', value: '0' },
   { label: 'Falhou', value: '1' },
 ];
+const SIM_NAO = [
+  { label: 'Não', value: '0' },
+  { label: 'Sim', value: '1' },
+];
 
 const schema = yup.object({
   acuidade_triagem_direito:  yup.string().oneOf([...ACUIDADE_VALUES]).required('Obrigatório'),
@@ -19,6 +23,7 @@ const schema = yup.object({
   test_cover:                yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
   test_movimento_ocular:     yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
   test_mancha_branca:        yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
+  atendimento_oftalmologico_previo: yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
 });
 
 interface Props {
@@ -36,6 +41,7 @@ export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) =
       test_cover:                student.test_cover                ?? '0',
       test_movimento_ocular:     student.test_movimento_ocular     ?? '0',
       test_mancha_branca:        student.test_mancha_branca        ?? '0',
+      atendimento_oftalmologico_previo: student.atendimento_oftalmologico_previo ?? '0',
     },
     validationSchema: schema,
     onSubmit,
@@ -62,6 +68,21 @@ export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) =
             onChange={(v) => formik.setFieldValue('acuidade_triagem_esquerdo', v)}
             options={ACUIDADE}
             error={formik.touched.acuidade_triagem_esquerdo ? formik.errors.acuidade_triagem_esquerdo : undefined}
+            required
+          />
+        </div>
+      </div>
+
+      <div className="detail-form__section">
+        <p className="detail-form__section-title">Histórico</p>
+        <div className="detail-form__grid">
+          <Select
+            id="atendimento_oftalmologico_previo"
+            label="Já teve algum atendimento oftalmológico antes?"
+            value={formik.values.atendimento_oftalmologico_previo}
+            onChange={(v) => formik.setFieldValue('atendimento_oftalmologico_previo', v)}
+            options={SIM_NAO}
+            error={formik.touched.atendimento_oftalmologico_previo ? formik.errors.atendimento_oftalmologico_previo : undefined}
             required
           />
         </div>

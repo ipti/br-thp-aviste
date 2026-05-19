@@ -46,6 +46,11 @@ export const SchoolListPage = () => {
         <div className="loading-center">
           <i className="pi pi-spin pi-spinner" />
         </div>
+      ) : schools.length === 0 ? (
+        <div className="alert">
+          <i className="pi pi-inbox" />
+          Nenhuma escola cadastrada no momento.
+        </div>
       ) : (
         <div className="school-list__grid">
           {schools.map((school) => (

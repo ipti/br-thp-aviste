@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+﻿import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -28,9 +28,20 @@ export class AuthService {
       role: user.role,
     });
 
+    const rows = await this.prisma.user_school.findMany({
+      where: { user_fk: user.id },
+      select: { school_fk: true },
+    });
+
     return {
       access_token: token,
-      user: { id: user.id, name: user.name, username: user.username, role: user.role },
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        role: user.role,
+        schoolIds: rows.map((row) => row.school_fk),
+      },
     };
   }
 }

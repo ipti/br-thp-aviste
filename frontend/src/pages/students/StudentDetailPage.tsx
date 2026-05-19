@@ -276,6 +276,10 @@ export const StudentDetailPage = () => {
               <FieldRow label="Teste cover"   value={student.test_cover === '0' ? 'Passou' : student.test_cover === '1' ? 'Falhou' : '—'} />
               <FieldRow label="Mov. ocular"   value={student.test_movimento_ocular === '0' ? 'Passou' : student.test_movimento_ocular === '1' ? 'Falhou' : '—'} />
               <FieldRow label="Mancha branca" value={student.test_mancha_branca === '0' ? 'Passou' : student.test_mancha_branca === '1' ? 'Falhou' : '—'} />
+              <FieldRow
+                label="Atendimento oftalmológico prévio"
+                value={student.atendimento_oftalmologico_previo === '1' ? 'Sim' : student.atendimento_oftalmologico_previo === '0' ? 'Não' : '—'}
+              />
             </div>
           )}
         </section>

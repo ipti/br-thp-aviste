@@ -58,16 +58,23 @@ export const SchoolDetailPage = () => {
 
       <h2 className="section-title">Turmas</h2>
 
-      <div className="classroom-grid">
-        {classrooms.map((cls) => (
-          <Card key={cls.id} onClick={() => navigate(`/turmas/${cls.id}`)}>
-            <p className="classroom-card__name">{cls.name}</p>
-            <p className="classroom-card__school">{school?.name}</p>
-            <p className="classroom-card__label">Turma</p>
-            {cls.year && <Badge label={cls.year} variant="primary" />}
-          </Card>
-        ))}
-      </div>
+      {classrooms.length === 0 ? (
+        <div className="alert">
+          <i className="pi pi-inbox" />
+          Nenhuma turma cadastrada para esta escola.
+        </div>
+      ) : (
+        <div className="classroom-grid">
+          {classrooms.map((cls) => (
+            <Card key={cls.id} onClick={() => navigate(`/turmas/${cls.id}`)}>
+              <p className="classroom-card__name">{cls.name}</p>
+              <p className="classroom-card__school">{school?.name}</p>
+              <p className="classroom-card__label">Turma</p>
+              {cls.year && <Badge label={cls.year} variant="primary" />}
+            </Card>
+          ))}
+        </div>
+      )}
 
       {isAdmin && (
         <FAB onClick={() => setShowClassroomModal(true)} title="Adicionar turma" />

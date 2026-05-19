@@ -39,3 +39,27 @@ export const useDeleteUser = () => {
     },
   });
 };
+
+export const useAddUserSchool = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, schoolId }: { id: number; schoolId: number }) =>
+      usersApi.addSchool(id, schoolId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY });
+      toastService.success('Escola vinculada ao usuário');
+    },
+  });
+};
+
+export const useRemoveUserSchool = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, schoolId }: { id: number; schoolId: number }) =>
+      usersApi.removeSchool(id, schoolId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY });
+      toastService.success('Escola removida do usuário');
+    },
+  });
+};

@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+﻿import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { CurrentUser, JwtPayload } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -25,14 +26,17 @@ export class SchoolsController {
 
   @Get()
   @ApiOkResponse({ type: [SchoolResponseDto] })
-  findAll(): Promise<SchoolResponseDto[]> {
-    return this.schoolsService.findAll();
+  findAll(@CurrentUser() user: JwtPayload): Promise<SchoolResponseDto[]> {
+    return this.schoolsService.findAll(user);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: SchoolResponseDto })
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<SchoolResponseDto> {
-    return this.schoolsService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<SchoolResponseDto> {
+    return this.schoolsService.findOne(id, user);
   }
 
   @Put(':id')
@@ -53,3 +57,4 @@ export class SchoolsController {
     return this.schoolsService.remove(id);
   }
 }
+

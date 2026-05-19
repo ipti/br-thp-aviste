@@ -21,6 +21,7 @@ export class StudentResponseDto {
   @ApiProperty() entrega_oculos_concluida: boolean;
   @ApiPropertyOptional() data_entrega_oculos?: string | null;
   @ApiPropertyOptional() responsavel_entrega_oculos?: string | null;
+  @ApiPropertyOptional() atendimento_oftalmologico_previo?: string | null;
   @ApiProperty() createdAt: Date;
   @ApiProperty() updatedAt: Date;
 }

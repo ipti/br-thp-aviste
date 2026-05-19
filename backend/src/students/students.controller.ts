@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+﻿import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { CurrentUser, JwtPayload } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -24,8 +25,11 @@ export class StudentsController {
   @Post()
   @Roles(Role.ADMIN, Role.TRIADOR)
   @ApiCreatedResponse({ type: StudentResponseDto })
-  create(@Body() dto: CreateStudentDto): Promise<StudentResponseDto> {
-    return this.studentsService.create(dto) as Promise<StudentResponseDto>;
+  create(
+    @Body() dto: CreateStudentDto,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<StudentResponseDto> {
+    return this.studentsService.create(dto, user) as Promise<StudentResponseDto>;
   }
 
   @Get()
@@ -33,10 +37,11 @@ export class StudentsController {
   @ApiQuery({ name: 'classroomId', required: false, type: Number })
   @ApiQuery({ name: 'schoolId', required: false, type: Number })
   findAll(
+    @CurrentUser() user: JwtPayload,
     @Query('classroomId') classroomId?: string,
     @Query('schoolId') schoolId?: string,
   ): Promise<StudentResponseDto[]> {
-    return this.studentsService.findAll({
+    return this.studentsService.findAll(user, {
       classroomId: classroomId ? Number(classroomId) : undefined,
       schoolId: schoolId ? Number(schoolId) : undefined,
     }) as Promise<StudentResponseDto[]>;
@@ -44,8 +49,11 @@ export class StudentsController {
 
   @Get(':id')
   @ApiOkResponse({ type: StudentResponseDto })
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<StudentResponseDto> {
-    return this.studentsService.findOne(id) as Promise<StudentResponseDto>;
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<StudentResponseDto> {
+    return this.studentsService.findOne(id, user) as Promise<StudentResponseDto>;
   }
 
   @Put(':id')
@@ -54,8 +62,9 @@ export class StudentsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateStudentDto,
+    @CurrentUser() user: JwtPayload,
   ): Promise<StudentResponseDto> {
-    return this.studentsService.update(id, dto) as Promise<StudentResponseDto>;
+    return this.studentsService.update(id, dto, user) as Promise<StudentResponseDto>;
   }
 
   @Put(':id/questionnaire')
@@ -64,8 +73,9 @@ export class StudentsController {
   updateQuestionnaire(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateQuestionnaireDto,
+    @CurrentUser() user: JwtPayload,
   ): Promise<StudentResponseDto> {
-    return this.studentsService.updateQuestionnaire(id, dto) as Promise<StudentResponseDto>;
+    return this.studentsService.updateQuestionnaire(id, dto, user) as Promise<StudentResponseDto>;
   }
 
   @Put(':id/screening')
@@ -74,8 +84,9 @@ export class StudentsController {
   updateScreening(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateScreeningDto,
+    @CurrentUser() user: JwtPayload,
   ): Promise<StudentResponseDto> {
-    return this.studentsService.updateScreening(id, dto) as Promise<StudentResponseDto>;
+    return this.studentsService.updateScreening(id, dto, user) as Promise<StudentResponseDto>;
   }
 
   @Put(':id/prescription')
@@ -84,8 +95,9 @@ export class StudentsController {
   updatePrescription(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdatePrescriptionDto,
+    @CurrentUser() user: JwtPayload,
   ): Promise<StudentResponseDto> {
-    return this.studentsService.updatePrescription(id, dto) as Promise<StudentResponseDto>;
+    return this.studentsService.updatePrescription(id, dto, user) as Promise<StudentResponseDto>;
   }
 
   @Put(':id/consultation')
@@ -94,8 +106,9 @@ export class StudentsController {
   updateConsultation(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateConsultationDto,
+    @CurrentUser() user: JwtPayload,
   ): Promise<StudentResponseDto> {
-    return this.studentsService.updateConsultation(id, dto) as Promise<StudentResponseDto>;
+    return this.studentsService.updateConsultation(id, dto, user) as Promise<StudentResponseDto>;
   }
 
   @Put(':id/glasses-delivered')
@@ -104,15 +117,20 @@ export class StudentsController {
   markGlassesDelivered(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateGlassesDeliveryDto,
+    @CurrentUser() user: JwtPayload,
   ): Promise<StudentResponseDto> {
-    return this.studentsService.markGlassesDelivered(id, dto) as Promise<StudentResponseDto>;
+    return this.studentsService.markGlassesDelivered(id, dto, user) as Promise<StudentResponseDto>;
   }
 
   @Delete(':id')
   @Roles(Role.ADMIN)
   @HttpCode(204)
   @ApiNoContentResponse()
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.studentsService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<void> {
+    return this.studentsService.remove(id, user);
   }
 }
+

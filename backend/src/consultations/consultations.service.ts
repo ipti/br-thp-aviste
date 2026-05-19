@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+﻿import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConsultationItemDto } from './dto/consultation-response.dto';
+import { JwtPayload } from '../common/decorators/current-user.decorator';
+import { getAllowedSchoolIds } from '../common/access/school-access';
 
 const THRESHOLD = 5;
 
@@ -14,11 +16,18 @@ const resolvePriority = (points: number): string => {
 export class ConsultationsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findForwarded(schoolId?: number): Promise<ConsultationItemDto[]> {
+  async findForwarded(user: JwtPayload, schoolId?: number): Promise<ConsultationItemDto[]> {
+    const allowedSchoolIds = await getAllowedSchoolIds(this.prisma, user);
+
+    if (allowedSchoolIds && schoolId && !allowedSchoolIds.includes(schoolId)) {
+      throw new ForbiddenException('Acesso negado para esta escola');
+    }
+
     const records = await this.prisma.student_data.findMany({
       where: {
         points: { gte: THRESHOLD },
         ...(schoolId && { school_fk: schoolId }),
+        ...(allowedSchoolIds ? { school_fk: { in: allowedSchoolIds } } : {}),
       },
       include: {
         classroom: { select: { name: true } },
@@ -40,3 +49,4 @@ export class ConsultationsService {
     }));
   }
 }
+

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../stores/authStore';
 import { authApi } from './api/authApi';
 import { Button } from '../../components/ui/Button';
@@ -17,6 +17,7 @@ const schema = yup.object({
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const setSession = useAuthStore((s) => s.setSession);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -24,6 +25,7 @@ export const LoginPage = () => {
     mutationFn: ({ username, password }: { username: string; password: string }) =>
       authApi.login(username, password),
     onSuccess: (data) => {
+      queryClient.clear();
       setSession(data.access_token, data.user);
       navigate('/escolas', { replace: true });
     },
