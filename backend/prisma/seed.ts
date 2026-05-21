@@ -12,7 +12,7 @@ async function main() {
     return;
   }
 
-  const hashedPassword = await bcrypt.hash('admin@123', 10);
+  const hashedPassword = await bcrypt.hash(process.env.PASSWORD_ADMIN, 10);
 
   const admin = await prisma.users.create({
     data: {
