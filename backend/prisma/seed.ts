@@ -1,6 +1,10 @@
 import 'dotenv/config';
+// allow `require` in this script without depending on @types/node
+declare function require(name: string): any;
 import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+// Use `require` for bcrypt to avoid type declaration issues during build
+// (some environments may not install dev @types packages). We'll treat it as any.
+const bcrypt: any = require('bcrypt');
 
 const prisma = new PrismaClient();
 
@@ -12,7 +16,9 @@ async function main() {
     return;
   }
 
-  const hashedPassword = await bcrypt.hash(process.env.PASSWORD_ADMIN, 10);
+  const env = (globalThis as any).process?.env ?? {};
+  const passwordAdmin: string = env.PASSWORD_ADMIN ?? 'admin@123';
+  const hashedPassword = await bcrypt.hash(passwordAdmin, 10);
 
   const admin = await prisma.users.create({
     data: {
@@ -33,7 +39,13 @@ async function main() {
 main()
   .catch((e) => {
     console.error('Erro ao executar seed:', e);
-    process.exit(1);
+    // use globalThis to avoid TypeScript errors when `process` types are not available
+    try {
+      (globalThis as any).process.exit(1);
+    } catch {
+      // nothing else to do
+    }
+    throw e;
   })
   .finally(async () => {
     await prisma.$disconnect();
