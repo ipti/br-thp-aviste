@@ -82,6 +82,10 @@
     gap: $spacing-4;
   }
 
+  &__user {
+    position: relative;
+  }
+
   &__avatar {
     @include flex-center;
     width: 40px;
@@ -100,6 +104,62 @@
 
     &:focus-visible {
       @include focus-ring;
+    }
+  }
+
+  &__popover {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: 250px;
+    background: $color-white;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+    padding: $spacing-4;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    z-index: calc(#{$z-header} + 5);
+  }
+
+  &__popover-name {
+    margin: 0;
+    font-size: $font-size-sm;
+    font-weight: 700;
+    color: $color-gray-900;
+  }
+
+  &__popover-line {
+    margin: 0;
+    font-size: $font-size-xs;
+    color: $color-gray-500;
+
+    span {
+      font-weight: 600;
+      color: $color-gray-700;
+    }
+  }
+
+  &__popover-logout {
+    margin-top: $spacing-2;
+    height: 36px;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+    background: $color-gray-50;
+    color: $color-gray-700;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-2;
+    transition: background $transition-fast, color $transition-fast, border-color $transition-fast;
+
+    &:hover {
+      background: $color-brand-lightest;
+      border-color: $color-brand-light;
+      color: $color-brand-dark;
     }
   }
 }
