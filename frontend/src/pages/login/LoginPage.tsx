@@ -88,7 +88,7 @@ export const LoginPage = () => {
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                placeholder="Placeholder"
+                placeholder="Digite a senha"
                 autoComplete="current-password"
               />
               <button
