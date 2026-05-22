@@ -16,9 +16,9 @@ export class AppService {
       'http://localhost:3000',
       'https://meuben.thp.org.br',
       'http://localhost:3001',
-      'https://purple-tree-056a6850f.5.azurestaticapps.net',
+      'https://lupa.thp.org.br',
       'http://localhost:5174',
-      '*',
+      'https://witty-hill-05a6b6d10.7.azurestaticapps.net',
     ];
   }
 }
