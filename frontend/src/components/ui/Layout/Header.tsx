@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../hooks/useAuth';
 import './styles.scss';
-import image from '../../../assets/logo.png';
+import image from '../../../assets/Logo.png';
 
 interface Props {
   onMenuToggle: () => void;

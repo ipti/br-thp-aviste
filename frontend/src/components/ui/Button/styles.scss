@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../../styles/variables' as *;
 
 .ui-btn {
@@ -78,8 +79,8 @@
     border: 1.5px solid $color-danger;
 
     &:hover:not(:disabled) {
-      background: darken(#EF4444, 8%);
-      border-color: darken(#EF4444, 8%);
+      background: color.adjust(#EF4444, $lightness: -8%);
+      border-color: color.adjust(#EF4444, $lightness: -8%);
     }
 
     &:focus-visible {

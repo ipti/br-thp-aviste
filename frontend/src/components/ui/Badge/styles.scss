@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../../styles/variables' as *;
 
 .ui-badge {
@@ -15,12 +16,12 @@
 
   &--success {
     background: rgba($color-success, 0.15);
-    color: darken($color-success, 15%);
+    color: color.adjust($color-success, $lightness: -15%);
   }
 
   &--warning {
     background: rgba($color-warning, 0.15);
-    color: darken($color-warning, 20%);
+    color: color.adjust($color-warning, $lightness: -20%);
   }
 
   &--danger {
