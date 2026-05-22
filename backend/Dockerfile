@@ -51,4 +51,4 @@ COPY --from=builder /home/api ./
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run prisma:migrate && npm run start:prod"]
+CMD ["sh", "-c", "npm run prisma:migrate && npx prisma db seed && npm run start:prod"]

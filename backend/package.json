@@ -6,7 +6,7 @@
     "build": "nest build",
   "start": "npm run prisma:seed && nest start",
   "start:dev": "npm run prisma:seed && nest start --watch",
-  "start:prod": "npm run prisma:seed && node dist/main",
+     "start:prod": "node dist/main",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:seed": "ts-node prisma/seed.ts",
