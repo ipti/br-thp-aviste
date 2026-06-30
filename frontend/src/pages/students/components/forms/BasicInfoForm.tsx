@@ -4,6 +4,7 @@ import { Input } from '../../../../components/ui/Input';
 import { Select } from '../../../../components/ui/Select';
 import { Button } from '../../../../components/ui/Button';
 import type { Student } from '../../api/studentsApi';
+import { isMinorFromBirthday } from '../../utils/age';
 
 const SEX_OPTIONS     = [{ label: 'Masculino', value: 0 }, { label: 'Feminino', value: 1 }];
 const COLOR_OPTIONS   = [
@@ -16,8 +17,9 @@ const TURNO_OPTIONS   = [
   { label: 'Noite', value: 'Noite' }, { label: 'Integral', value: 'Integral' },
 ];
 
-const DATE_RE = /^\d{2}\/\d{2}\/\d{4}$/;
-const CPF_RE  = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+const DATE_RE  = /^\d{2}\/\d{2}\/\d{4}$/;
+const CPF_RE   = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+const PHONE_RE = /^\(\d{2}\) \d{4,5}-\d{4}$/;
 
 const schema = yup.object({
   name:       yup.string().required('Obrigatório'),
@@ -27,6 +29,39 @@ const schema = yup.object({
   color_race: yup.number().min(0).required('Obrigatório'),
   zone:       yup.number().min(0).required('Obrigatório'),
   turno:      yup.string().nullable().optional(),
+
+  telephone: yup.string().when('birthday', ([birthday], s) =>
+    isMinorFromBirthday(birthday)
+      ? s.test('phone', 'Use (11) 99999-9999', (v) => !v || PHONE_RE.test(v))
+      : s.required('Obrigatório').matches(PHONE_RE, 'Use (11) 99999-9999'),
+  ),
+
+  responsable_name: yup.string().when('birthday', ([birthday], s) =>
+    isMinorFromBirthday(birthday)
+      ? s.required('Obrigatório').min(2, 'Nome muito curto')
+      : s.optional(),
+  ),
+
+  responsable_cpf: yup.string().when('birthday', ([birthday], s) =>
+    isMinorFromBirthday(birthday)
+      ? s.required('Obrigatório').matches(CPF_RE, 'CPF inválido')
+      : s.test('cpf', 'CPF inválido', (v) => !v || CPF_RE.test(v)),
+  ),
+
+  responsable_telephone: yup.string().when('birthday', ([birthday], s) =>
+    isMinorFromBirthday(birthday)
+      ? s.required('Obrigatório').matches(PHONE_RE, 'Use (11) 99999-9999')
+      : s.test('phone', 'Use (11) 99999-9999', (v) => !v || PHONE_RE.test(v)),
+  ),
+
+  responsable_email: yup.string().when('birthday', ([birthday], s) =>
+    isMinorFromBirthday(birthday)
+      ? s.required('Obrigatório').email('E-mail inválido')
+      : s.email('E-mail inválido').optional(),
+  ),
+
+  is_legal_responsible:         yup.boolean(),
+  image_sharing_not_authorized: yup.boolean(),
 });
 
 interface Props {
@@ -47,10 +82,19 @@ export const BasicInfoForm = ({ student, onSubmit, loading, onCancel }: Props) =
       zone:       student.zone,
       deficiency: student.deficiency,
       turno:      student.turno ?? null,
+      telephone:                    student.telephone                    ?? '',
+      responsable_name:             student.responsable_name             ?? '',
+      responsable_cpf:              student.responsable_cpf              ?? '',
+      responsable_telephone:        student.responsable_telephone        ?? '',
+      responsable_email:            student.responsable_email            ?? '',
+      is_legal_responsible:         student.is_legal_responsible         ?? false,
+      image_sharing_not_authorized: student.image_sharing_not_authorized ?? false,
     },
     validationSchema: schema,
     onSubmit,
   });
+
+  const isMinor = isMinorFromBirthday(formik.values.birthday);
 
   return (
     <form onSubmit={formik.handleSubmit} noValidate className="detail-form">
@@ -127,6 +171,99 @@ export const BasicInfoForm = ({ student, onSubmit, loading, onCancel }: Props) =
           />
           <label htmlFor="bi-deficiency" style={{ fontSize: '0.875rem', cursor: 'pointer' }}>
             Possui deficiência
+          </label>
+        </div>
+      </div>
+
+      <h3 style={{ fontSize: '0.875rem', fontWeight: 600, margin: '1.5rem 0 0.75rem', color: 'var(--color-text-secondary, #666)' }}>
+        Responsável e contato
+      </h3>
+      <div className="detail-form__grid">
+        {!isMinor && (
+          <Input
+            id="bi-telephone"
+            label="Telefone"
+            value={formik.values.telephone}
+            onChange={(v) => formik.setFieldValue('telephone', v)}
+            error={formik.touched.telephone ? formik.errors.telephone : undefined}
+            placeholder="(11) 99999-9999"
+            mask="phone"
+            required
+          />
+        )}
+
+        {isMinor && (
+          <>
+            <Input
+              id="bi-responsable_name"
+              label="Nome do responsável"
+              value={formik.values.responsable_name}
+              onChange={(v) => formik.setFieldValue('responsable_name', v)}
+              error={formik.touched.responsable_name ? formik.errors.responsable_name : undefined}
+              placeholder="Nome completo"
+              required
+            />
+            <Input
+              id="bi-responsable_cpf"
+              label="CPF do responsável"
+              value={formik.values.responsable_cpf}
+              onChange={(v) => formik.setFieldValue('responsable_cpf', v)}
+              error={formik.touched.responsable_cpf ? formik.errors.responsable_cpf : undefined}
+              placeholder="000.000.000-00"
+              mask="cpf"
+              required
+            />
+            <Input
+              id="bi-responsable_telephone"
+              label="Telefone do responsável"
+              value={formik.values.responsable_telephone}
+              onChange={(v) => formik.setFieldValue('responsable_telephone', v)}
+              error={formik.touched.responsable_telephone ? formik.errors.responsable_telephone : undefined}
+              placeholder="(11) 99999-9999"
+              mask="phone"
+              required
+            />
+            <Input
+              id="bi-responsable_email"
+              label="E-mail do responsável"
+              value={formik.values.responsable_email}
+              onChange={(v) => formik.setFieldValue('responsable_email', v)}
+              error={formik.touched.responsable_email ? formik.errors.responsable_email : undefined}
+              placeholder="email@exemplo.com"
+              required
+            />
+            <Input
+              id="bi-telephone"
+              label="Telefone do aluno"
+              value={formik.values.telephone}
+              onChange={(v) => formik.setFieldValue('telephone', v)}
+              error={formik.touched.telephone ? formik.errors.telephone : undefined}
+              placeholder="(11) 99999-9999"
+              mask="phone"
+            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <input
+                type="checkbox"
+                id="bi-is_legal_responsible"
+                checked={formik.values.is_legal_responsible}
+                onChange={(e) => formik.setFieldValue('is_legal_responsible', e.target.checked)}
+              />
+              <label htmlFor="bi-is_legal_responsible" style={{ fontSize: '0.875rem', cursor: 'pointer' }}>
+                É responsável legal
+              </label>
+            </div>
+          </>
+        )}
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <input
+            type="checkbox"
+            id="bi-image_sharing_not_authorized"
+            checked={formik.values.image_sharing_not_authorized}
+            onChange={(e) => formik.setFieldValue('image_sharing_not_authorized', e.target.checked)}
+          />
+          <label htmlFor="bi-image_sharing_not_authorized" style={{ fontSize: '0.875rem', cursor: 'pointer' }}>
+            Não autoriza compartilhamento de imagem
           </label>
         </div>
       </div>

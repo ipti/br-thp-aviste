@@ -1,4 +1,4 @@
-﻿import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+﻿import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Role, student_data } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { PointsService } from '../points/points.service';
@@ -19,6 +19,16 @@ export class StudentsService {
     private readonly pointsService: PointsService,
   ) {}
 
+  private isMinor(birthday: string): boolean {
+    const [d, m, y] = birthday.split('/').map(Number);
+    const birth = new Date(y, m - 1, d);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const mo = today.getMonth() - birth.getMonth();
+    if (mo < 0 || (mo === 0 && today.getDate() < birth.getDate())) age--;
+    return age < 18;
+  }
+
   private async ensureSchoolAccess(user: JwtPayload, schoolId: number): Promise<void> {
     if (user.role === Role.ADMIN) return;
 
@@ -31,6 +41,17 @@ export class StudentsService {
 
   async create(dto: CreateStudentDto, user: JwtPayload): Promise<student_data> {
     await this.ensureSchoolAccess(user, dto.school_fk);
+
+    if (this.isMinor(dto.birthday)) {
+      const missing = ['responsable_name', 'responsable_cpf', 'responsable_telephone', 'responsable_email']
+        .filter((k) => !dto[k as keyof CreateStudentDto]);
+      if (missing.length) {
+        throw new BadRequestException('Dados do responsável são obrigatórios para menores de idade');
+      }
+    } else if (!dto.telephone) {
+      throw new BadRequestException('Telefone é obrigatório para maiores de idade');
+    }
+
     return this.prisma.student_data.create({ data: dto });
   }
 

@@ -11,4 +11,12 @@ export class UpdateStudentDto {
   @ApiPropertyOptional() @IsOptional() @IsBoolean() deficiency?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsString() turno?: string;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() permission?: boolean;
+
+  @ApiPropertyOptional() @IsOptional() @IsString() telephone?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() responsable_name?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() responsable_cpf?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() responsable_telephone?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() responsable_email?: string;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() is_legal_responsible?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() image_sharing_not_authorized?: boolean;
 }

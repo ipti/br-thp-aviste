@@ -85,6 +85,15 @@ model student_data {
   turno      String?  @db.VarChar(20)  // Manhã|Tarde|Noite|Integral
   permission Boolean  @default(false)
 
+  // Dados do responsável e contato
+  telephone                    String?  @db.VarChar(20)
+  responsable_name             String?  @db.VarChar(200)
+  responsable_cpf              String?  @db.VarChar(14)
+  responsable_telephone        String?  @db.VarChar(20)
+  responsable_email            String?  @db.VarChar(200)
+  is_legal_responsible         Boolean  @default(false)
+  image_sharing_not_authorized Boolean  @default(false)
+
   // Questionário dos pais
   filho_oculos                    String? @db.VarChar(1)  // "0"|"1"
   horas_uso_aparelhos_eletronicos Int?    @db.SmallInt    // 1-5

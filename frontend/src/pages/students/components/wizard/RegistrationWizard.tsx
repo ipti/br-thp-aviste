@@ -5,10 +5,12 @@ import { studentsApi, type CreateStudentData } from '../../api/studentsApi';
 import { useQueryClient } from '@tanstack/react-query';
 import { StepConsent } from './StepConsent';
 import { StepBasicInfo } from './StepBasicInfo';
+import { StepResponsible } from './StepResponsible';
+import { isMinorFromBirthday } from '../../utils/age';
 import '../../styles.scss';
 import './styles.scss';
 
-const STEPS = ['Consentimento', 'Dados Básicos'];
+const STEPS = ['Consentimento', 'Dados Básicos', 'Dados do Responsável'];
 
 export const RegistrationWizard = () => {
   const { classroomId } = useParams<{ classroomId: string }>();
@@ -53,6 +55,13 @@ export const RegistrationWizard = () => {
         permission:  merged.permission as boolean,
         classroom_fk: Number(classroomId),
         school_fk:   classroom.school_fk,
+        telephone:                    (merged.telephone as string)                    || undefined,
+        responsable_name:             (merged.responsable_name as string)             || undefined,
+        responsable_cpf:              (merged.responsable_cpf as string)              || undefined,
+        responsable_telephone:        (merged.responsable_telephone as string)        || undefined,
+        responsable_email:            (merged.responsable_email as string)            || undefined,
+        is_legal_responsible:         merged.is_legal_responsible as boolean,
+        image_sharing_not_authorized: merged.image_sharing_not_authorized as boolean,
       };
 
       const student = await studentsApi.create(payload);
@@ -64,6 +73,8 @@ export const RegistrationWizard = () => {
       setIsPending(false);
     }
   };
+
+  const isMinor = isMinorFromBirthday(formData.birthday as string | undefined);
 
   return (
     <div className="wizard">
@@ -102,6 +113,7 @@ export const RegistrationWizard = () => {
 
         {step === 0 && <StepConsent onNext={next} />}
         {step === 1 && <StepBasicInfo onNext={next} initial={formData} loading={isPending} />}
+        {step === 2 && <StepResponsible onNext={next} initial={formData} isMinor={isMinor} loading={isPending} />}
       </div>
     </div>
   );

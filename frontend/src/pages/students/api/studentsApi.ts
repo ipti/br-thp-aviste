@@ -73,6 +73,14 @@ export interface Student {
   nome_medico?: string;
   data_entrega_oculos?: string;
   responsavel_entrega_oculos?: string;
+  // responsável e contato
+  telephone?: string;
+  responsable_name?: string;
+  responsable_cpf?: string;
+  responsable_telephone?: string;
+  responsable_email?: string;
+  is_legal_responsible?: boolean;
+  image_sharing_not_authorized?: boolean;
 }
 
 export interface CreateStudentData {
@@ -87,6 +95,13 @@ export interface CreateStudentData {
   permission: boolean;
   classroom_fk: number;
   school_fk: number;
+  telephone?: string;
+  responsable_name?: string;
+  responsable_cpf?: string;
+  responsable_telephone?: string;
+  responsable_email?: string;
+  is_legal_responsible?: boolean;
+  image_sharing_not_authorized?: boolean;
 }
 
 export interface UpdateGlassesDeliveryData {
