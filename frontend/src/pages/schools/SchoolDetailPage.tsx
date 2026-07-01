@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSchool, useUpdateSchool, useDeleteSchool } from './hooks/useSchools';
 import { useClassrooms, useCreateClassroom } from '../classrooms/hooks/useClassrooms';
@@ -10,6 +9,8 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { FAB } from '../../components/ui/FAB';
 import { useAuth } from '../../hooks/useAuth';
+import { useConfirm } from '../../components/ui/ConfirmDialog/useConfirm';
+import { useState } from 'react';
 import './styles.scss';
 
 export const SchoolDetailPage = () => {
@@ -25,17 +26,21 @@ export const SchoolDetailPage = () => {
   const { data: classrooms = [] } = useClassrooms(id);
   const { mutate: updateSchool, isPending: updating } = useUpdateSchool();
   const { mutate: deleteSchool } = useDeleteSchool();
+  const { mutate: createClassroom, isPending: creatingClassroom } = useCreateClassroom();
+  const { confirmNode, openConfirm } = useConfirm();
 
   const handleUpdate = (name: string) => {
     updateSchool({ id, name }, { onSuccess: () => setShowEditModal(false) });
   };
 
   const handleDelete = () => {
-    if (!confirm('Deseja excluir esta escola? Todas as turmas e alunos serão removidos.')) return;
-    deleteSchool(id, { onSuccess: () => navigate('/escolas') });
+    openConfirm({
+      title: 'Excluir escola',
+      message: 'Deseja excluir esta escola? Todas as turmas e alunos serão removidos permanentemente.',
+      confirmLabel: 'Excluir',
+      onConfirm: () => deleteSchool(id, { onSuccess: () => navigate('/escolas') }),
+    });
   };
-
-  const { mutate: createClassroom, isPending: creatingClassroom } = useCreateClassroom();
 
   if (isLoading) {
     return <div className="loading-center"><i className="pi pi-spin pi-spinner" /></div>;
@@ -79,6 +84,8 @@ export const SchoolDetailPage = () => {
       {isAdmin && (
         <FAB onClick={() => setShowClassroomModal(true)} title="Adicionar turma" />
       )}
+
+      {confirmNode}
 
       <Modal visible={showEditModal} onHide={() => setShowEditModal(false)} title="Editar Escola">
         <SchoolForm

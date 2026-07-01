@@ -5,6 +5,7 @@ import { SchoolForm } from './components/SchoolForm';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { useAuth } from '../../hooks/useAuth';
+import { useConfirm } from '../../components/ui/ConfirmDialog/useConfirm';
 import './styles.scss';
 
 export const SchoolListPage = () => {
@@ -15,6 +16,7 @@ export const SchoolListPage = () => {
   const { data: schools = [], isLoading, isError } = useSchools();
   const { mutate: createSchool, isPending } = useCreateSchool();
   const { mutate: deleteSchool } = useDeleteSchool();
+  const { confirmNode, openConfirm } = useConfirm();
 
   const handleCreate = (name: string) => {
     createSchool(name, { onSuccess: () => setShowModal(false) });
@@ -70,7 +72,12 @@ export const SchoolListPage = () => {
                     className="school-card__delete"
                     onClick={(e) => {
                       e.stopPropagation();
-                      deleteSchool(school.id);
+                      openConfirm({
+                        title: 'Excluir escola',
+                        message: `Deseja excluir "${school.name}"? Todas as turmas e alunos serão removidos permanentemente.`,
+                        confirmLabel: 'Excluir',
+                        onConfirm: () => deleteSchool(school.id),
+                      });
                     }}
                     aria-label="Remover escola"
                   >
@@ -88,6 +95,8 @@ export const SchoolListPage = () => {
           ))}
         </div>
       )}
+
+      {confirmNode}
 
       <Modal visible={showModal} onHide={() => setShowModal(false)} title="Adicionar Escola">
         <SchoolForm

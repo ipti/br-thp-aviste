@@ -23,6 +23,7 @@ import {
   type SavedMigrationErrors,
   type MigrationStudentError,
 } from './api/classroomsApi';
+import { useConfirm } from '../../components/ui/ConfirmDialog/useConfirm';
 import { ClassroomPrescriptionsPDF } from './components/pdf/ClassroomPrescriptionsPDF';
 import './styles.scss';
 
@@ -77,6 +78,7 @@ export const ClassroomDetailPage = () => {
   const [showMigrationModal, setShowMigrationModal] = useState(false);
   const [exportingPrescriptions, setExportingPrescriptions] = useState(false);
   const [migrationErrors, setMigrationErrors] = useState<SavedMigrationErrors | null>(null);
+  const { confirmNode, openConfirm } = useConfirm();
 
   const { data: classroom, isLoading } = useClassroom(id);
   const { data: students = [] } = useStudents({ classroomId: id });
@@ -163,10 +165,15 @@ export const ClassroomDetailPage = () => {
   };
 
   const handleDeleteClassroom = () => {
-    if (!confirm('Deseja excluir esta turma? Todos os alunos serão removidos.')) return;
-    deleteClassroom(id, {
-      onSuccess: () =>
-        navigate(classroom?.school_fk ? `/escolas/${classroom.school_fk}` : '/escolas'),
+    openConfirm({
+      title: 'Excluir turma',
+      message: 'Deseja excluir esta turma? Todos os alunos serão removidos permanentemente.',
+      confirmLabel: 'Excluir',
+      onConfirm: () =>
+        deleteClassroom(id, {
+          onSuccess: () =>
+            navigate(classroom?.school_fk ? `/escolas/${classroom.school_fk}` : '/escolas'),
+        }),
     });
   };
 
@@ -294,7 +301,12 @@ export const ClassroomDetailPage = () => {
                       className="student-card__delete"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (confirm('Remover este aluno?')) deleteStudent(student.id);
+                        openConfirm({
+                          title: 'Remover aluno',
+                          message: `Deseja remover "${student.name}" da turma?`,
+                          confirmLabel: 'Remover',
+                          onConfirm: () => deleteStudent(student.id),
+                        });
                       }}
                       aria-label="Remover aluno"
                     >
@@ -325,6 +337,8 @@ export const ClassroomDetailPage = () => {
           loading={updating}
         />
       </Modal>
+
+      {confirmNode}
 
       <Modal
         visible={showMigrationModal}

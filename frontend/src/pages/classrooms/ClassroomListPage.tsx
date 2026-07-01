@@ -6,6 +6,7 @@ import { ClassroomForm } from './components/ClassroomForm';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { useAuth } from '../../hooks/useAuth';
+import { useConfirm } from '../../components/ui/ConfirmDialog/useConfirm';
 import './styles.scss';
 
 export const ClassroomListPage = () => {
@@ -21,6 +22,7 @@ export const ClassroomListPage = () => {
   );
   const { mutate: createClassroom, isPending } = useCreateClassroom();
   const { mutate: deleteClassroom } = useDeleteClassroom();
+  const { confirmNode, openConfirm } = useConfirm();
 
   useEffect(() => {
     if (selectedSchoolId === undefined && schools.length > 0) {
@@ -110,7 +112,12 @@ export const ClassroomListPage = () => {
                     className="classroom-card__delete"
                     onClick={(e) => {
                       e.stopPropagation();
-                      deleteClassroom(classroom.id);
+                      openConfirm({
+                        title: 'Excluir turma',
+                        message: `Deseja excluir a turma "${classroom.name}"? Todos os alunos serão removidos permanentemente.`,
+                        confirmLabel: 'Excluir',
+                        onConfirm: () => deleteClassroom(classroom.id),
+                      });
                     }}
                     aria-label="Remover turma"
                   >
@@ -126,6 +133,8 @@ export const ClassroomListPage = () => {
           ))}
         </div>
       )}
+
+      {confirmNode}
 
       {selectedSchoolId !== undefined && (
         <Modal

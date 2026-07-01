@@ -1,0 +1,52 @@
+@use '../../../styles/variables' as *;
+
+.ui-confirm-dialog {
+  .p-dialog-header { display: none; }
+  .p-dialog-content { padding: 0; border-radius: $radius-lg; }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: $spacing-8 $spacing-6 $spacing-6;
+    gap: $spacing-3;
+  }
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-full;
+    background: rgba($color-danger, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi {
+      font-size: 1.5rem;
+      color: $color-danger;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $color-gray-900;
+  }
+
+  &__message {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    line-height: 1.6;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-3;
+    margin-top: $spacing-2;
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import type { User, CreateUserData } from './api/usersApi';
 import type { BadgeProps } from '../../components/ui/Badge';
 import { useSchools } from '../schools/hooks/useSchools';
+import { useConfirm } from '../../components/ui/ConfirmDialog/useConfirm';
 
 const roleVariant = (role: string): BadgeProps['variant'] => {
   if (role === 'ADMIN') return 'danger';
@@ -30,6 +31,7 @@ export const UserListPage = () => {
   const { mutate: deleteUser } = useDeleteUser();
   const { mutate: addUserSchool, isPending: addingSchool } = useAddUserSchool();
   const { mutate: removeUserSchool, isPending: removingSchool } = useRemoveUserSchool();
+  const { confirmNode, openConfirm } = useConfirm();
 
   const handleSubmit = (data: CreateUserData) => {
     if (editing) {
@@ -40,8 +42,12 @@ export const UserListPage = () => {
   };
 
   const handleDelete = (user: User) => {
-    if (!confirm(`Excluir o usuário "${user.name}"?`)) return;
-    deleteUser(user.id);
+    openConfirm({
+      title: 'Excluir usuário',
+      message: `Deseja excluir o usuário "${user.name}"? Esta ação não pode ser desfeita.`,
+      confirmLabel: 'Excluir',
+      onConfirm: () => deleteUser(user.id),
+    });
   };
 
   const isSchoolLinked = (user: User, schoolId: number) => user.schoolIds.includes(schoolId);
@@ -122,6 +128,8 @@ export const UserListPage = () => {
           },
         ]}
       />
+
+      {confirmNode}
 
       <Modal
         visible={showModal}
