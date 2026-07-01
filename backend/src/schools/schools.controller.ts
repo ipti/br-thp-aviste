@@ -39,6 +39,15 @@ export class SchoolsController {
     return this.schoolsService.findOne(id, user);
   }
 
+  @Get(':id/stats')
+  @ApiOkResponse()
+  getStats(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.schoolsService.getStats(id, user);
+  }
+
   @Put(':id')
   @Roles(Role.ADMIN)
   @ApiOkResponse({ type: SchoolResponseDto })

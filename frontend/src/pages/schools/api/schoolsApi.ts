@@ -6,6 +6,13 @@ export interface School {
   createdAt: string;
 }
 
+export interface SchoolStats {
+  total_classrooms: number;
+  total_students: number;
+  total_consultations: number;
+  students_5_to_12: number;
+}
+
 export const schoolsApi = {
   list: (): Promise<School[]> =>
     api.get<School[]>('/schools').then((r) => r.data),
@@ -21,4 +28,7 @@ export const schoolsApi = {
 
   remove: (id: number): Promise<void> =>
     api.delete(`/schools/${id}`).then(() => undefined),
+
+  getStats: (id: number): Promise<SchoolStats> =>
+    api.get<SchoolStats>(`/schools/${id}/stats`).then((r) => r.data),
 };

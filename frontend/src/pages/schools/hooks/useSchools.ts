@@ -32,6 +32,13 @@ export const useUpdateSchool = () => {
   });
 };
 
+export const useSchoolStats = (id: number) =>
+  useQuery({
+    queryKey: [...KEY, id, 'stats'],
+    queryFn: () => schoolsApi.getStats(id),
+    enabled: !!id,
+  });
+
 export const useDeleteSchool = () => {
   const qc = useQueryClient();
   return useMutation({

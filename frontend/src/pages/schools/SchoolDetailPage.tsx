@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSchool, useUpdateSchool, useDeleteSchool } from './hooks/useSchools';
+import { useSchool, useUpdateSchool, useDeleteSchool, useSchoolStats } from './hooks/useSchools';
 import { useClassrooms, useCreateClassroom } from '../classrooms/hooks/useClassrooms';
 import { SchoolForm } from './components/SchoolForm';
 import { ClassroomForm } from '../classrooms/components/ClassroomForm';
@@ -24,6 +24,7 @@ export const SchoolDetailPage = () => {
 
   const { data: school, isLoading } = useSchool(id);
   const { data: classrooms = [] } = useClassrooms(id);
+  const { data: stats } = useSchoolStats(id);
   const { mutate: updateSchool, isPending: updating } = useUpdateSchool();
   const { mutate: deleteSchool } = useDeleteSchool();
   const { mutate: createClassroom, isPending: creatingClassroom } = useCreateClassroom();
@@ -59,6 +60,29 @@ export const SchoolDetailPage = () => {
             <Button label="Excluir" variant="danger" size="sm" onClick={handleDelete} icon="pi pi-trash" />
           </div>
         )}
+      </div>
+
+      <div className="school-stats">
+        <div className="school-stats__card school-stats__card--blue">
+          <div className="school-stats__icon"><i className="pi pi-folder" /></div>
+          <span className="school-stats__value">{stats?.total_classrooms ?? '—'}</span>
+          <span className="school-stats__label">Total de turmas</span>
+        </div>
+        <div className="school-stats__card school-stats__card--green">
+          <div className="school-stats__icon"><i className="pi pi-users" /></div>
+          <span className="school-stats__value">{stats?.total_students ?? '—'}</span>
+          <span className="school-stats__label">Total de alunos</span>
+        </div>
+        <div className="school-stats__card school-stats__card--purple">
+          <div className="school-stats__icon"><i className="pi pi-file-check" /></div>
+          <span className="school-stats__value">{stats?.total_consultations ?? '—'}</span>
+          <span className="school-stats__label">Total de consultas</span>
+        </div>
+        <div className="school-stats__card school-stats__card--orange">
+          <div className="school-stats__icon"><i className="pi pi-star" /></div>
+          <span className="school-stats__value">{stats?.students_5_to_12 ?? '—'}</span>
+          <span className="school-stats__label">Alunos entre 5 e 12 anos</span>
+        </div>
       </div>
 
       <h2 className="section-title">Turmas</h2>

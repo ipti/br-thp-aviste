@@ -14,6 +14,66 @@
   margin-top: $spacing-6;
 }
 
+// ── School stats dashboard ────────────────────────────────────────────────────
+.school-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-4;
+  margin: $spacing-6 0;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+
+  &__card {
+    background: $color-white;
+    border-radius: $radius-lg;
+    border: 1.5px solid $color-gray-200;
+    padding: $spacing-5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-2;
+    transition: box-shadow $transition-fast;
+
+    &:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07); }
+
+    &--blue   { border-top: 3px solid $color-brand-primary; }
+    &--green  { border-top: 3px solid $color-success; }
+    &--purple { border-top: 3px solid #8B5CF6; }
+    &--orange { border-top: 3px solid $color-warning; }
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $spacing-1;
+
+    .pi { font-size: 1.125rem; color: $color-white; }
+
+    .school-stats__card--blue   & { background: $color-brand-primary; }
+    .school-stats__card--green  & { background: $color-success; }
+    .school-stats__card--purple & { background: #8B5CF6; }
+    .school-stats__card--orange & { background: $color-warning; }
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $color-gray-900;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    font-weight: 500;
+  }
+}
+
 // ── School card ───────────────────────────────────────────────────────────────
 .school-card {
   background: $color-white;
