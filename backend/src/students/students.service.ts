@@ -65,11 +65,16 @@ export class StudentsService {
       throw new ForbiddenException('Acesso negado para esta escola');
     }
 
+    const schoolConstraint = params.schoolId
+      ? { school_fk: params.schoolId }
+      : allowedSchoolIds
+        ? { school_fk: { in: allowedSchoolIds } }
+        : {};
+
     return this.prisma.student_data.findMany({
       where: {
         ...(params.classroomId && { classroom_fk: params.classroomId }),
-        ...(params.schoolId && { school_fk: params.schoolId }),
-        ...(allowedSchoolIds ? { school_fk: { in: allowedSchoolIds } } : {}),
+        ...schoolConstraint,
       },
       orderBy: { name: 'asc' },
     });

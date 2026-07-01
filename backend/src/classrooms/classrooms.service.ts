@@ -34,11 +34,14 @@ export class ClassroomsService {
       throw new ForbiddenException('Acesso negado para esta escola');
     }
 
+    const schoolFilter = schoolId
+      ? { school_fk: schoolId }
+      : allowedSchoolIds
+        ? { school_fk: { in: allowedSchoolIds } }
+        : {};
+
     return this.prisma.classroom.findMany({
-      where: {
-        ...(schoolId ? { school_fk: schoolId } : {}),
-        ...(allowedSchoolIds ? { school_fk: { in: allowedSchoolIds } } : {}),
-      },
+      where: schoolFilter,
       include: { school: SCHOOL_SELECT },
       orderBy: { name: 'asc' },
     });
