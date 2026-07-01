@@ -128,6 +128,13 @@ export class MigrationService {
         color_race: number;
         deficiency: boolean;
         zone: number;
+        telephone: string | null;
+        responsable_name: string | null;
+        responsable_cpf: string | null;
+        responsable_telephone: string | null;
+        responsable_email: string | null;
+        is_legal_responsible: boolean;
+        image_sharing_not_authorized: boolean;
       }
     | { errors: string[] } {
     const errors: string[] = [];
@@ -149,6 +156,19 @@ export class MigrationService {
     const zone = this.toInteger(record.zone);
     if (zone === null) errors.push('zone');
 
+    // Validação por maioridade — só quando birthday é válido
+    if (birthday) {
+      const minor = this.isMinor(record.birthday);
+      if (minor) {
+        if (!record.responsable_name?.trim()) errors.push('responsable_name');
+        if (!this.sanitizeCpf(record.responsable_cpf)) errors.push('responsable_cpf');
+        if (!this.sanitizePhone(record.responsable_telephone)) errors.push('responsable_telephone');
+        if (!record.responsable_email?.trim()) errors.push('responsable_email');
+      } else {
+        if (!this.sanitizePhone(record.telephone)) errors.push('telephone');
+      }
+    }
+
     if (
       errors.length > 0 ||
       !birthday ||
@@ -168,6 +188,13 @@ export class MigrationService {
       color_race: colorRace,
       deficiency: Boolean(record.deficiency ?? false),
       zone,
+      telephone:                    this.sanitizePhone(record.telephone),
+      responsable_name:             record.responsable_name             ?? null,
+      responsable_cpf:              this.sanitizeCpf(record.responsable_cpf),
+      responsable_telephone:        this.sanitizePhone(record.responsable_telephone),
+      responsable_email:            record.responsable_email            ?? null,
+      is_legal_responsible:         Boolean(record.is_legal_responsible         ?? false),
+      image_sharing_not_authorized: Boolean(record.image_sharing_not_authorized ?? false),
     };
   }
 
@@ -177,11 +204,30 @@ export class MigrationService {
     return digits.length > 0 ? digits : null;
   }
 
+  private sanitizePhone(phone: string | null): string | null {
+    if (!phone) return null;
+    const digits = phone.replace(/\D/g, '');
+    return digits.length > 0 ? digits : null;
+  }
+
   private toInteger(value: unknown): number | null {
     if (value === null || value === undefined || value === '') return null;
     const parsed = Number(value);
     if (!Number.isInteger(parsed)) return null;
     return parsed;
+  }
+
+  private isMinor(birthday: string | null | undefined): boolean {
+    if (!birthday) return false;
+    const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(birthday.trim());
+    if (!match) return false;
+    const birthDate = new Date(Date.UTC(Number(match[3]), Number(match[2]) - 1, Number(match[1])));
+    const today = new Date();
+    const age = today.getUTCFullYear() - birthDate.getUTCFullYear();
+    const hasBirthdayPassed =
+      today.getUTCMonth() > birthDate.getUTCMonth() ||
+      (today.getUTCMonth() === birthDate.getUTCMonth() && today.getUTCDate() >= birthDate.getUTCDate());
+    return (hasBirthdayPassed ? age : age - 1) < 18;
   }
 
   private convertDate(date: string | null | undefined): string | null {
@@ -216,6 +262,13 @@ export class MigrationService {
       color_race: number;
       deficiency: boolean;
       zone: number;
+      telephone: string | null;
+      responsable_name: string | null;
+      responsable_cpf: string | null;
+      responsable_telephone: string | null;
+      responsable_email: string | null;
+      is_legal_responsible: boolean;
+      image_sharing_not_authorized: boolean;
     }>;
   }): Promise<unknown> {
     try {

@@ -1,14 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-interface ErrorBody {
-  statusCode: number;
-  message: string | string[];
-  error: string;
-  path: string;
-  timestamp: string;
-}
-
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
@@ -21,19 +13,26 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    const exceptionResponse =
+      exception instanceof HttpException
+        ? (exception.getResponse() as Record<string, unknown>)
+        : {};
+
     const message =
       exception instanceof HttpException
-        ? ((exception.getResponse() as Record<string, unknown>).message ?? exception.message)
+        ? (exceptionResponse.message ?? exception.message)
         : 'Erro interno do servidor';
 
-    const body: ErrorBody = {
+    const { message: _, statusCode: __, error: ___, ...extras } =
+      exceptionResponse as Record<string, unknown>;
+
+    res.status(status).json({
       statusCode: status,
-      message: message as string | string[],
+      message,
       error: HttpStatus[status],
       path: req.url,
       timestamp: new Date().toISOString(),
-    };
-
-    res.status(status).json(body);
+      ...extras,
+    });
   }
 }

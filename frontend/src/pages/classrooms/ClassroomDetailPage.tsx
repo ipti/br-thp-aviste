@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { pdf } from '@react-pdf/renderer';
 import type { DocumentProps } from '@react-pdf/renderer';
@@ -18,8 +18,48 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAuth } from '../../hooks/useAuth';
 import type { Student } from '../students/api/studentsApi';
+import {
+  migrationErrorsStorage,
+  type SavedMigrationErrors,
+  type MigrationStudentError,
+} from './api/classroomsApi';
 import { ClassroomPrescriptionsPDF } from './components/pdf/ClassroomPrescriptionsPDF';
 import './styles.scss';
+
+const FIELD_LABELS: Record<string, string> = {
+  // dados básicos
+  name:        'Nome completo',
+  birthday:    'Data de nascimento',
+  cpf:         'CPF do aluno',
+  sex:         'Sexo',
+  color_race:  'Cor/Raça',
+  zone:        'Zona (urbana ou rural)',
+  deficiency:  'Informação de deficiência',
+  // responsável e contato
+  telephone:              'Telefone do aluno',
+  responsable_name:       'Nome do responsável',
+  responsable_cpf:        'CPF do responsável',
+  responsable_telephone:  'Telefone do responsável',
+  responsable_email:      'E-mail do responsável',
+  is_legal_responsible:   'Responsável legal',
+  image_sharing_not_authorized: 'Autorização de imagem',
+};
+
+function formatErrorTimestamp(iso: string): string {
+  return new Date(iso).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+function fieldLabel(field: string): string {
+  return FIELD_LABELS[field] ?? field;
+}
+
+function isMigrationValidationError(error: unknown): error is { response: { data: { students: MigrationStudentError[] } } } {
+  const data = (error as { response?: { data?: Record<string, unknown> } })?.response?.data;
+  return Array.isArray(data?.students) && (data.students as unknown[]).length > 0;
+}
 
 function avatarVariant(student: Student): 'green' | 'yellow' | 'red' {
   if (student.points >= 10) return 'red';
@@ -36,6 +76,7 @@ export const ClassroomDetailPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showMigrationModal, setShowMigrationModal] = useState(false);
   const [exportingPrescriptions, setExportingPrescriptions] = useState(false);
+  const [migrationErrors, setMigrationErrors] = useState<SavedMigrationErrors | null>(null);
 
   const { data: classroom, isLoading } = useClassroom(id);
   const { data: students = [] } = useStudents({ classroomId: id });
@@ -45,14 +86,15 @@ export const ClassroomDetailPage = () => {
   const { mutate: deleteStudent } = useDeleteStudent();
   const { mutate: sendMigration, isPending: sendingMigration } = useSendMigration();
 
+  useEffect(() => {
+    if (id) setMigrationErrors(migrationErrorsStorage.load(id));
+  }, [id]);
+
   const nowLabel = () =>
     new Date()
       .toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit',
       })
       .replace(',', ' -') + 'h';
 
@@ -98,10 +140,27 @@ export const ClassroomDetailPage = () => {
           name: values.name.trim(),
           year: Number(values.year),
         },
-        { onSuccess: () => setShowMigrationModal(false) },
+        {
+          onSuccess: () => {
+            migrationErrorsStorage.clear(id);
+            setMigrationErrors(null);
+            setShowMigrationModal(false);
+          },
+          onError: (error) => {
+            if (isMigrationValidationError(error)) {
+              const saved = migrationErrorsStorage.save(id, error.response.data.students);
+              setMigrationErrors(saved);
+            }
+          },
+        },
       );
     },
   });
+
+  const handleClearMigrationErrors = () => {
+    migrationErrorsStorage.clear(id);
+    setMigrationErrors(null);
+  };
 
   const handleDeleteClassroom = () => {
     if (!confirm('Deseja excluir esta turma? Todos os alunos serão removidos.')) return;
@@ -186,6 +245,21 @@ export const ClassroomDetailPage = () => {
           )}
         </div>
       </div>
+
+      {isAdmin && migrationErrors && migrationErrors.students.length > 0 && (
+        <button
+          type="button"
+          className="migration-error-banner"
+          onClick={() => setShowMigrationModal(true)}
+        >
+          <i className="pi pi-exclamation-triangle" />
+          <span>
+            {migrationErrors.students.length} aluno{migrationErrors.students.length > 1 ? 's' : ''} com
+            dados incompletos para migração — clique para ver
+          </span>
+          <i className="pi pi-chevron-right" style={{ marginLeft: 'auto' }} />
+        </button>
+      )}
 
       <h2 className="section-title">Matrículas</h2>
 
@@ -304,6 +378,38 @@ export const ClassroomDetailPage = () => {
               error={migrationForm.touched.year ? migrationForm.errors.year : undefined}
               required
             />
+
+            {migrationErrors && migrationErrors.students.length > 0 && (
+              <div className="migration-error-panel">
+                <div className="migration-error-panel__header">
+                  <span>
+                    <i className="pi pi-exclamation-triangle" />
+                    {migrationErrors.students.length} aluno{migrationErrors.students.length > 1 ? 's' : ''} com
+                    dados incompletos
+                  </span>
+                  <span className="migration-error-panel__time">
+                    {formatErrorTimestamp(migrationErrors.timestamp)}
+                  </span>
+                </div>
+                <ul className="migration-error-panel__list">
+                  {migrationErrors.students.map((s) => (
+                    <li key={s.student_id} className="migration-error-panel__item">
+                      <span className="migration-error-panel__student-name">{s.name}</span>
+                      <span className="migration-error-panel__fields">
+                        {s.missing_or_invalid_fields.map(fieldLabel).join(', ')}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  className="migration-error-panel__clear"
+                  onClick={handleClearMigrationErrors}
+                >
+                  Limpar registro de erros
+                </button>
+              </div>
+            )}
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
               <Button
