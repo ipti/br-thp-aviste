@@ -4,7 +4,7 @@ import { Select } from '../../../../components/ui/Select';
 import { Button } from '../../../../components/ui/Button';
 import type { Student } from '../../api/studentsApi';
 
-const ACUIDADE_VALUES = ['1', '2', '3', '4', '5', '6', '7', '8', 'nenhum'] as const;
+const ACUIDADE_VALUES = ['20/200', '20/100', '20/80', '20/70', '20/60', '20/50', '20/40', '20/30', '20/25', '20/20', 'nenhum'] as const;
 const TESTE_VALUES    = ['0', '1'] as const;
 
 const ACUIDADE = ACUIDADE_VALUES.map((v) => ({ label: v === 'nenhum' ? 'Nenhum' : v, value: v }));
