@@ -116,6 +116,10 @@
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: $spacing-4;
     margin-bottom: $spacing-4;
+
+    &--full {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__actions {

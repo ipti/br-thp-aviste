@@ -37,4 +37,27 @@
       cursor: not-allowed;
     }
   }
+
+  &__textarea {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: $font-size-sm;
+    color: $color-gray-900;
+    border: 1px solid $color-gray-300;
+    border-radius: 6px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $color-gray-400;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $color-brand-primary;
+      box-shadow: 0 0 0 2px rgba($color-brand-primary, 0.15);
+    }
+  }
 }

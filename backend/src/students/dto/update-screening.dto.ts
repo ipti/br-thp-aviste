@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsIn } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 
 const ACUIDADE = ['1', '2', '3', '4', '5', '6', '7', '8', 'nenhum'] as const;
 
@@ -27,4 +27,10 @@ export class UpdateScreeningDto {
   @ApiProperty({ description: '"0"=Não, "1"=Sim' })
   @IsIn(['0', '1'])
   atendimento_oftalmologico_previo: string;
+
+  @ApiPropertyOptional({ description: 'Observações livres da triagem visual' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  observacao_triagem?: string;
 }

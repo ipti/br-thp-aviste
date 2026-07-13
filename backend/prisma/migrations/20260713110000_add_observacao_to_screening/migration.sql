@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `student_data` ADD COLUMN `observacao_triagem` TEXT NULL;

@@ -32,6 +32,7 @@ export const StepScreening = ({ onNext, loading, initial }: Props) => {
       test_movimento_ocular: (initial.test_movimento_ocular as string) ?? '0',
       test_mancha_branca: (initial.test_mancha_branca as string) ?? '0',
       atendimento_oftalmologico_previo: (initial.atendimento_oftalmologico_previo as string) ?? '0',
+      observacao_triagem: (initial.observacao_triagem as string) ?? '',
     },
     onSubmit: (values) => onNext(values as unknown as Record<string, unknown>),
   });
@@ -97,6 +98,24 @@ export const StepScreening = ({ onNext, loading, initial }: Props) => {
             onChange={(v) => formik.setFieldValue('test_mancha_branca', v)}
             options={PASSOU_FALHOU}
           />
+        </div>
+      </div>
+
+      <div className="wizard-step__section">
+        <p className="wizard-step__section-title">Observações</p>
+        <div className="wizard-step__grid wizard-step__grid--full">
+          <div className="ui-input">
+            <label htmlFor="observacao_triagem" className="ui-input__label">Observações da triagem</label>
+            <textarea
+              id="observacao_triagem"
+              className="ui-input__textarea"
+              rows={4}
+              maxLength={2000}
+              value={formik.values.observacao_triagem}
+              onChange={(e) => formik.setFieldValue('observacao_triagem', e.target.value)}
+              placeholder="Anotações adicionais sobre a triagem visual..."
+            />
+          </div>
         </div>
       </div>
 

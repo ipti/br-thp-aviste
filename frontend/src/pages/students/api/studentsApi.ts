@@ -58,6 +58,7 @@ export interface Student {
   test_movimento_ocular?: string;
   test_mancha_branca?: string;
   atendimento_oftalmologico_previo?: string;
+  observacao_triagem?: string;
   // receita
   receita_esferico_od?: string;
   receita_cilindrico_od?: string;

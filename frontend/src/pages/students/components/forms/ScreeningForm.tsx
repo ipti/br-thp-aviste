@@ -4,10 +4,15 @@ import { Select } from '../../../../components/ui/Select';
 import { Button } from '../../../../components/ui/Button';
 import type { Student } from '../../api/studentsApi';
 
-const ACUIDADE_VALUES = ['20/200', '20/100', '20/80', '20/70', '20/60', '20/50', '20/40', '20/30', '20/25', '20/20', 'nenhum'] as const;
+const ACUIDADE_VALUES = ['1', '2', '3', '4', '5', '6', '7', '8', 'nenhum'] as const;
 const TESTE_VALUES    = ['0', '1'] as const;
 
-const ACUIDADE = ACUIDADE_VALUES.map((v) => ({ label: v === 'nenhum' ? 'Nenhum' : v, value: v }));
+const ACUIDADE_LABELS: Record<string, string> = {
+  '1': '20/200', '2': '20/100', '3': '20/80', '4': '20/60',
+  '5': '20/50',  '6': '20/40',  '7': '20/30', '8': '20/20',
+  'nenhum': 'Nenhum',
+};
+const ACUIDADE = ACUIDADE_VALUES.map((v) => ({ label: ACUIDADE_LABELS[v], value: v }));
 const PASSOU_FALHOU = [
   { label: 'Passou', value: '0' },
   { label: 'Falhou', value: '1' },
@@ -24,6 +29,7 @@ const schema = yup.object({
   test_movimento_ocular:     yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
   test_mancha_branca:        yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
   atendimento_oftalmologico_previo: yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
+  observacao_triagem: yup.string().max(2000).optional(),
 });
 
 interface Props {
@@ -42,6 +48,7 @@ export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) =
       test_movimento_ocular:     student.test_movimento_ocular     ?? '0',
       test_mancha_branca:        student.test_mancha_branca        ?? '0',
       atendimento_oftalmologico_previo: student.atendimento_oftalmologico_previo ?? '0',
+      observacao_triagem: student.observacao_triagem ?? '',
     },
     validationSchema: schema,
     onSubmit,
@@ -118,6 +125,24 @@ export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) =
             error={formik.touched.test_mancha_branca ? formik.errors.test_mancha_branca : undefined}
             required
           />
+        </div>
+      </div>
+
+      <div className="detail-form__section">
+        <p className="detail-form__section-title">Observações</p>
+        <div className="detail-form__grid detail-form__grid--full">
+          <div className="ui-input">
+            <label htmlFor="observacao_triagem" className="ui-input__label">Observações da triagem</label>
+            <textarea
+              id="observacao_triagem"
+              className="ui-input__textarea"
+              rows={4}
+              maxLength={2000}
+              value={formik.values.observacao_triagem}
+              onChange={(e) => formik.setFieldValue('observacao_triagem', e.target.value)}
+              placeholder="Anotações adicionais sobre a triagem visual..."
+            />
+          </div>
         </div>
       </div>
 
