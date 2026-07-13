@@ -1,0 +1,17 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/assets/*", "/*.ico", "/*.svg", "/*.png", "/*.webp"]
+  },
+  "mimeTypes": {
+    ".js": "application/javascript",
+    ".mjs": "application/javascript",
+    ".css": "text/css",
+    ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
+    ".wasm": "application/wasm"
+  },
+  "globalHeaders": {
+    "Cache-Control": "no-cache"
+  }
+}
