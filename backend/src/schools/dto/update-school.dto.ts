@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateSchoolDto } from './create-school.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsInt, IsOptional, IsString, Min, MinLength } from 'class-validator';
 
-export class UpdateSchoolDto extends PartialType(CreateSchoolDto) {}
+export class UpdateSchoolDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() @MinLength(3) name?: string;
+  @ApiPropertyOptional() @IsOptional() @IsInt() @Min(0) total_alunos_participantes?: number | null;
+}

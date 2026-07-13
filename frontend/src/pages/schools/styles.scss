@@ -17,12 +17,13 @@
 // ── School stats dashboard ────────────────────────────────────────────────────
 .school-stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: $spacing-4;
   margin: $spacing-6 0;
 
-  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: 480px) { grid-template-columns: 1fr; }
+  @media (max-width: 1100px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 700px)  { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 480px)  { grid-template-columns: 1fr; }
 
   &__card {
     background: $color-white;
@@ -41,6 +42,9 @@
     &--green  { border-top: 3px solid $color-success; }
     &--purple { border-top: 3px solid #8B5CF6; }
     &--orange { border-top: 3px solid $color-warning; }
+    &--teal   { border-top: 3px solid #0D9488; }
+
+    &--editable { position: relative; }
   }
 
   &__icon {
@@ -58,6 +62,80 @@
     .school-stats__card--green  & { background: $color-success; }
     .school-stats__card--purple & { background: #8B5CF6; }
     .school-stats__card--orange & { background: $color-warning; }
+    .school-stats__card--teal   & { background: #0D9488; }
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &__edit-btn {
+    background: none;
+    border: none;
+    padding: $spacing-1;
+    cursor: pointer;
+    color: $color-gray-400;
+    font-size: 0.75rem;
+    border-radius: $radius-sm;
+    transition: color $transition-fast, background $transition-fast;
+
+    &:hover { color: #0D9488; background: rgba(13, 148, 136, 0.08); }
+  }
+
+  &__edit-row {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+    width: 100%;
+  }
+
+  &__input {
+    width: 100%;
+    padding: $spacing-1 $spacing-2;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $color-gray-900;
+    border: 1.5px solid #0D9488;
+    border-radius: $radius-sm;
+    outline: none;
+    background: $color-white;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button { opacity: 1; }
+  }
+
+  &__edit-actions {
+    display: flex;
+    gap: $spacing-2;
+  }
+
+  &__save-btn,
+  &__cancel-btn {
+    flex: 1;
+    padding: $spacing-1;
+    border: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: background $transition-fast;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+
+  &__save-btn {
+    background: #0D9488;
+    color: $color-white;
+    &:not(:disabled):hover { background: #0F766E; }
+  }
+
+  &__cancel-btn {
+    background: $color-gray-100;
+    color: $color-gray-700;
+    &:hover { background: $color-gray-200; }
   }
 
   &__value {

@@ -24,7 +24,8 @@ export const useCreateSchool = () => {
 export const useUpdateSchool = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, name }: { id: number; name: string }) => schoolsApi.update(id, name),
+    mutationFn: ({ id, ...data }: { id: number; name?: string; total_alunos_participantes?: number | null }) =>
+      schoolsApi.update(id, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: KEY });
       toastService.success('Escola atualizada');

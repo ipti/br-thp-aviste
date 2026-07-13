@@ -21,6 +21,8 @@ export const SchoolDetailPage = () => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [showClassroomModal, setShowClassroomModal] = useState(false);
+  const [editingParticipantes, setEditingParticipantes] = useState(false);
+  const [participantesValue, setParticipantesValue] = useState<string>('');
 
   const { data: school, isLoading } = useSchool(id);
   const { data: classrooms = [] } = useClassrooms(id);
@@ -32,6 +34,20 @@ export const SchoolDetailPage = () => {
 
   const handleUpdate = (name: string) => {
     updateSchool({ id, name }, { onSuccess: () => setShowEditModal(false) });
+  };
+
+  const startEditParticipantes = () => {
+    setParticipantesValue(String(school?.total_alunos_participantes ?? ''));
+    setEditingParticipantes(true);
+  };
+
+  const saveParticipantes = () => {
+    const num = participantesValue.trim() === '' ? null : parseInt(participantesValue, 10);
+    if (participantesValue.trim() !== '' && isNaN(num!)) return;
+    updateSchool(
+      { id, total_alunos_participantes: num },
+      { onSuccess: () => setEditingParticipantes(false) },
+    );
   };
 
   const handleDelete = () => {
@@ -82,6 +98,38 @@ export const SchoolDetailPage = () => {
           <div className="school-stats__icon"><i className="pi pi-star" /></div>
           <span className="school-stats__value">{stats?.students_5_to_12 ?? '—'}</span>
           <span className="school-stats__label">Alunos entre 5 e 12 anos</span>
+        </div>
+        <div className="school-stats__card school-stats__card--teal school-stats__card--editable">
+          <div className="school-stats__card-header">
+            <div className="school-stats__icon"><i className="pi pi-user-plus" /></div>
+            {isAdmin && !editingParticipantes && (
+              <button className="school-stats__edit-btn" onClick={startEditParticipantes} title="Editar" type="button">
+                <i className="pi pi-pencil" />
+              </button>
+            )}
+          </div>
+          {editingParticipantes ? (
+            <div className="school-stats__edit-row">
+              <input
+                className="school-stats__input"
+                type="number"
+                min={0}
+                value={participantesValue}
+                onChange={(e) => setParticipantesValue(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') saveParticipantes(); if (e.key === 'Escape') setEditingParticipantes(false); }}
+                autoFocus
+              />
+              <div className="school-stats__edit-actions">
+                <button className="school-stats__save-btn" onClick={saveParticipantes} type="button" disabled={updating}><i className="pi pi-check" /></button>
+                <button className="school-stats__cancel-btn" onClick={() => setEditingParticipantes(false)} type="button"><i className="pi pi-times" /></button>
+              </div>
+            </div>
+          ) : (
+            <span className="school-stats__value">
+              {school?.total_alunos_participantes != null ? school.total_alunos_participantes : '—'}
+            </span>
+          )}
+          <span className="school-stats__label">Alunos participantes</span>
         </div>
       </div>
 
