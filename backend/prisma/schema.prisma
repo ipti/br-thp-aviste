@@ -159,6 +159,62 @@ model student_data {
   crm_medico    String? @db.VarChar(50)
   nome_medico   String? @db.VarChar(200)
 
+  // Consulta — Spot Vision OD
+  spot_esferico_od    String? @db.VarChar(20)
+  spot_cilindrico_od  String? @db.VarChar(20)
+  spot_eixo_od        String? @db.VarChar(20)
+  spot_eq_esferico_od String? @db.VarChar(20)
+  spot_dp_od          String? @db.VarChar(20)
+  // Consulta — Spot Vision OE
+  spot_esferico_oe    String? @db.VarChar(20)
+  spot_cilindrico_oe  String? @db.VarChar(20)
+  spot_eixo_oe        String? @db.VarChar(20)
+  spot_eq_esferico_oe String? @db.VarChar(20)
+  spot_dp_oe          String? @db.VarChar(20)
+  spot_observacao     String? @db.Text
+
+  // Consulta — Anamnese
+  anamnese String? @db.Text
+
+  // Consulta — Refração Estática OD
+  ref_estatica_esferico_od   String? @db.VarChar(20)
+  ref_estatica_cilindrico_od String? @db.VarChar(20)
+  ref_estatica_eixo_od       String? @db.VarChar(20)
+  ref_estatica_acuidade_od   String? @db.VarChar(20)
+  // Consulta — Refração Estática OE
+  ref_estatica_esferico_oe   String? @db.VarChar(20)
+  ref_estatica_cilindrico_oe String? @db.VarChar(20)
+  ref_estatica_eixo_oe       String? @db.VarChar(20)
+  ref_estatica_acuidade_oe   String? @db.VarChar(20)
+
+  // Consulta — Exames
+  biomicroscopia_od String? @db.Text
+  biomicroscopia_oe String? @db.Text
+  fundoscopia_od    String? @db.Text
+  fundoscopia_oe    String? @db.Text
+  motilidade_ocular String? @db.Text
+
+  // Consulta — Diagnóstico e conduta
+  diagnostico    String? @db.Text
+  conduta        String? @db.Text
+  precisa_oculos String? @db.VarChar(1) // "0"=não | "1"=sim
+
+  // Consulta — Acompanhamento
+  acomp_ambliopia              Boolean @default(false)
+  acomp_retinoblastoma         Boolean @default(false)
+  acomp_catarata_congenita     Boolean @default(false)
+  acomp_obstrucao_lacrimais    Boolean @default(false)
+  acomp_estrabismo             Boolean @default(false)
+  acomp_glaucoma_congenito     Boolean @default(false)
+  acomp_uveites                Boolean @default(false)
+  acomp_nistagmo               Boolean @default(false)
+  acomp_miopia_progressiva     Boolean @default(false)
+  acomp_ectasias_cornea        Boolean @default(false)
+  acomp_alergias_conjuntivites Boolean @default(false)
+  acomp_baixa_visao_central    Boolean @default(false)
+  proxima_consulta_meses       String? @db.VarChar(10)
+  observacoes_consulta         String? @db.Text
+
   // Dados da entrega de óculos
   data_entrega_oculos        String? @db.VarChar(20)
   responsavel_entrega_oculos String? @db.VarChar(200)

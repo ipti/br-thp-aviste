@@ -75,6 +75,9 @@ export const StudentDetailPage = () => {
   const navigate = useNavigate();
   const { isAdmin, isMedico, isTriador } = useAuth();
   const [openForm, setOpenForm] = useState<Section | null>(null);
+  const [activeTab, setActiveTab] = useState<Section>('basic');
+
+  const switchTab = (tab: Section) => { setActiveTab(tab); setOpenForm(null); };
 
   const { data: student, isLoading } = useStudent(id);
   const { mutate: saveBasic,         isPending: savingB }  = useUpdateBasic(id);
@@ -113,12 +116,13 @@ export const StudentDetailPage = () => {
     }
   };
 
-  const progressSteps = [
-    { label: 'Questionário', done: student.questionario_pais_concluido },
-    { label: 'Triagem',      done: student.triagem_concluida },
-    { label: 'Receita',      done: student.receita_oculos_concluida },
-    { label: 'Consulta',     done: student.consulta_concluida },
-    { label: 'Óculos',       done: student.entrega_oculos_concluida },
+  const tabs: { key: Section; label: string; show: boolean; done: boolean; disabled?: boolean }[] = [
+    { key: 'basic',         label: 'Dados',       show: true,              done: false },
+    { key: 'questionnaire', label: 'Questionário', show: canViewAllAspects, done: student.questionario_pais_concluido },
+    { key: 'screening',     label: 'Triagem',      show: canViewAllAspects, done: student.triagem_concluida },
+    { key: 'consultation',  label: 'Consulta',     show: canMedic,          done: student.consulta_concluida },
+    { key: 'prescription',  label: 'Receita',      show: canMedic,          done: student.receita_oculos_concluida },
+    { key: 'delivery',      label: 'Entrega',      show: canMedic,          done: student.entrega_oculos_concluida, disabled: !student.receita_oculos_concluida },
   ];
 
   return (
@@ -135,18 +139,28 @@ export const StudentDetailPage = () => {
         />
       </div>
 
-      {/* Progresso */}
-      <div className="student-detail__progress">
-        {progressSteps.map((s) => (
-          <div key={s.label} className={['progress-step', s.done ? 'progress-step--done' : ''].filter(Boolean).join(' ')}>
-            <i className={`pi ${s.done ? 'pi-check-circle' : 'pi-circle'}`} />
-            <span>{s.label}</span>
-          </div>
+      {/* Tabs */}
+      <div className="student-tabs">
+        {tabs.filter(t => t.show).map(t => (
+          <button
+            key={t.key}
+            type="button"
+            disabled={t.disabled}
+            onClick={() => switchTab(t.key)}
+            className={[
+              'student-tab',
+              activeTab === t.key ? 'student-tab--active' : '',
+              t.done ? 'student-tab--done' : '',
+            ].filter(Boolean).join(' ')}
+          >
+            <i className={`pi ${t.done ? 'pi-check-circle' : 'pi-circle'}`} />
+            {t.label}
+          </button>
         ))}
       </div>
 
       {/* Dados básicos */}
-      <section className="detail-section">
+      {activeTab === 'basic' && <section className="detail-section">
         <div className="detail-section__header">
           <h3 className="detail-section__title">Dados Básicos</h3>
           {canEdit && openForm !== 'basic' && (
@@ -174,10 +188,10 @@ export const StudentDetailPage = () => {
             <FieldRow label="Autorização" value={student.permission} />
           </div>
         )}
-      </section>
+      </section>}
 
       {/* Questionário */}
-      {canViewAllAspects && (
+      {activeTab === 'questionnaire' && canViewAllAspects && (
         <section className="detail-section">
           <div className="detail-section__header">
             <h3 className="detail-section__title">
@@ -252,7 +266,7 @@ export const StudentDetailPage = () => {
       )}
 
       {/* Triagem */}
-      {canViewAllAspects && (
+      {activeTab === 'screening' && canViewAllAspects && (
         <section className="detail-section">
           <div className="detail-section__header">
             <h3 className="detail-section__title">
@@ -293,8 +307,157 @@ export const StudentDetailPage = () => {
         </section>
       )}
 
+      {/* Consulta */}
+      {activeTab === 'consultation' && canMedic && (
+        <section className="detail-section">
+          <div className="detail-section__header">
+            <h3 className="detail-section__title">
+              Consulta Médica
+              {student.consulta_concluida && <i className="pi pi-check-circle detail-section__done" />}
+            </h3>
+            {openForm !== 'consultation' && (
+              <button type="button" className="detail-section__edit-btn" onClick={() => setOpenForm('consultation')}>
+                {student.consulta_concluida ? 'Editar' : 'Preencher'}
+              </button>
+            )}
+          </div>
+          {openForm === 'consultation' ? (
+            <ConsultationForm
+              student={student}
+              onSubmit={(d) => handleSave('consultation', d)}
+              loading={savingC}
+              onCancel={() => setOpenForm(null)}
+            />
+          ) : student.consulta_concluida ? (
+            <div className="consulta-view">
+              <div className="detail-section__grid">
+                <FieldRow label="Data"   value={student.data_consulta} />
+                <FieldRow label="Médico" value={student.nome_medico} />
+                <FieldRow label="CRM"    value={student.crm_medico} />
+                <FieldRow label="Precisa de óculos" value={student.precisa_oculos === '1' ? 'Sim' : student.precisa_oculos === '0' ? 'Não' : undefined} />
+                {student.proxima_consulta_meses && <FieldRow label="Próxima consulta (meses)" value={student.proxima_consulta_meses} />}
+              </div>
+
+              {(student.spot_esferico_od || student.spot_esferico_oe) && (
+                <div className="consulta-view__block">
+                  <p className="consulta-view__subtitle">Spot Vision</p>
+                  <p className="consulta-view__eye-label">Olho direito</p>
+                  <div className="detail-section__grid">
+                    <FieldRow label="Esférico"   value={student.spot_esferico_od} />
+                    <FieldRow label="Cilíndrico" value={student.spot_cilindrico_od} />
+                    <FieldRow label="Eixo"       value={student.spot_eixo_od} />
+                    <FieldRow label="Eq. esférico" value={student.spot_eq_esferico_od} />
+                    <FieldRow label="DP"         value={student.spot_dp_od} />
+                  </div>
+                  <p className="consulta-view__eye-label">Olho esquerdo</p>
+                  <div className="detail-section__grid">
+                    <FieldRow label="Esférico"   value={student.spot_esferico_oe} />
+                    <FieldRow label="Cilíndrico" value={student.spot_cilindrico_oe} />
+                    <FieldRow label="Eixo"       value={student.spot_eixo_oe} />
+                    <FieldRow label="Eq. esférico" value={student.spot_eq_esferico_oe} />
+                    <FieldRow label="DP"         value={student.spot_dp_oe} />
+                  </div>
+                  {student.spot_observacao && <FieldRow label="Observação" value={student.spot_observacao} fullWidth />}
+                </div>
+              )}
+
+              {student.anamnese && (
+                <div className="consulta-view__block">
+                  <p className="consulta-view__subtitle">Anamnese</p>
+                  <FieldRow label="Anamnese" value={student.anamnese} fullWidth />
+                </div>
+              )}
+
+              {(student.ref_estatica_esferico_od || student.ref_estatica_esferico_oe) && (
+                <div className="consulta-view__block">
+                  <p className="consulta-view__subtitle">Refração Estática</p>
+                  <p className="consulta-view__eye-label">Olho direito</p>
+                  <div className="detail-section__grid">
+                    <FieldRow label="Esférico"       value={student.ref_estatica_esferico_od} />
+                    <FieldRow label="Cilíndrico"     value={student.ref_estatica_cilindrico_od} />
+                    <FieldRow label="Eixo"           value={student.ref_estatica_eixo_od} />
+                    <FieldRow label="Acuidade visual" value={student.ref_estatica_acuidade_od} />
+                  </div>
+                  <p className="consulta-view__eye-label">Olho esquerdo</p>
+                  <div className="detail-section__grid">
+                    <FieldRow label="Esférico"       value={student.ref_estatica_esferico_oe} />
+                    <FieldRow label="Cilíndrico"     value={student.ref_estatica_cilindrico_oe} />
+                    <FieldRow label="Eixo"           value={student.ref_estatica_eixo_oe} />
+                    <FieldRow label="Acuidade visual" value={student.ref_estatica_acuidade_oe} />
+                  </div>
+                </div>
+              )}
+
+              {(student.biomicroscopia_od || student.biomicroscopia_oe) && (
+                <div className="consulta-view__block">
+                  <p className="consulta-view__subtitle">Biomicroscopia</p>
+                  <div className="detail-section__grid">
+                    {student.biomicroscopia_od && <FieldRow label="Olho direito"   value={student.biomicroscopia_od} />}
+                    {student.biomicroscopia_oe && <FieldRow label="Olho esquerdo"  value={student.biomicroscopia_oe} />}
+                  </div>
+                </div>
+              )}
+
+              {(student.fundoscopia_od || student.fundoscopia_oe) && (
+                <div className="consulta-view__block">
+                  <p className="consulta-view__subtitle">Fundoscopia</p>
+                  <div className="detail-section__grid">
+                    {student.fundoscopia_od && <FieldRow label="Olho direito"  value={student.fundoscopia_od} />}
+                    {student.fundoscopia_oe && <FieldRow label="Olho esquerdo" value={student.fundoscopia_oe} />}
+                  </div>
+                </div>
+              )}
+
+              {student.motilidade_ocular && (
+                <div className="consulta-view__block">
+                  <FieldRow label="Motilidade ocular" value={student.motilidade_ocular} fullWidth />
+                </div>
+              )}
+
+              {(student.diagnostico || student.conduta) && (
+                <div className="consulta-view__block">
+                  <p className="consulta-view__subtitle">Diagnóstico e Conduta</p>
+                  <div className="detail-section__grid">
+                    {student.diagnostico && <FieldRow label="Diagnóstico" value={student.diagnostico} fullWidth />}
+                    {student.conduta     && <FieldRow label="Conduta"     value={student.conduta}     fullWidth />}
+                  </div>
+                </div>
+              )}
+
+              {(() => {
+                const ACOMP_LABELS: Record<string, string> = {
+                  acomp_ambliopia: 'Ambliopia', acomp_retinoblastoma: 'Retinoblastoma',
+                  acomp_catarata_congenita: 'Catarata congênita', acomp_obstrucao_lacrimais: 'Obstrução de vias lacrimais',
+                  acomp_estrabismo: 'Estrabismo', acomp_glaucoma_congenito: 'Glaucoma congênito',
+                  acomp_uveites: 'Uveítes', acomp_nistagmo: 'Nistagmo',
+                  acomp_miopia_progressiva: 'Miopia progressiva', acomp_ectasias_cornea: 'Ectasias de córnea',
+                  acomp_alergias_conjuntivites: 'Alergias / Conjuntivites / Calázio', acomp_baixa_visao_central: 'Baixa visão central',
+                };
+                const selected = Object.entries(ACOMP_LABELS).filter(([k]) => (student as Record<string, unknown>)[k]);
+                return selected.length > 0 ? (
+                  <div className="consulta-view__block">
+                    <p className="consulta-view__subtitle">Acompanhamento</p>
+                    <div className="consulta-view__tags">
+                      {selected.map(([k, label]) => <span key={k} className="consulta-view__tag">{label}</span>)}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
+              {student.observacoes_consulta && (
+                <div className="consulta-view__block">
+                  <FieldRow label="Observações" value={student.observacoes_consulta} fullWidth />
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="detail-section__empty-msg">Ainda não preenchida</p>
+          )}
+        </section>
+      )}
+
       {/* Receita */}
-      {canMedic && (
+      {activeTab === 'prescription' && canMedic && (
         <section className="detail-section">
           <div className="detail-section__header">
             <h3 className="detail-section__title">
@@ -343,41 +506,8 @@ export const StudentDetailPage = () => {
         </section>
       )}
 
-      {/* Consulta */}
-      {canMedic && (
-        <section className="detail-section">
-          <div className="detail-section__header">
-            <h3 className="detail-section__title">
-              Consulta Médica
-              {student.consulta_concluida && <i className="pi pi-check-circle detail-section__done" />}
-            </h3>
-            {openForm !== 'consultation' && (
-              <button type="button" className="detail-section__edit-btn" onClick={() => setOpenForm('consultation')}>
-                {student.consulta_concluida ? 'Editar' : 'Preencher'}
-              </button>
-            )}
-          </div>
-          {openForm === 'consultation' ? (
-            <ConsultationForm
-              student={student}
-              onSubmit={(d) => handleSave('consultation', d)}
-              loading={savingC}
-              onCancel={() => setOpenForm(null)}
-            />
-          ) : student.consulta_concluida ? (
-            <div className="detail-section__grid">
-              <FieldRow label="Data"   value={student.data_consulta} />
-              <FieldRow label="Médico" value={student.nome_medico} />
-              <FieldRow label="CRM"    value={student.crm_medico} />
-            </div>
-          ) : (
-            <p className="detail-section__empty-msg">Ainda não preenchida</p>
-          )}
-        </section>
-      )}
-
       {/* Entrega de óculos */}
-      {student.receita_oculos_concluida && (
+      {activeTab === 'delivery' && student.receita_oculos_concluida && (
         <section className="detail-section">
           <div className="detail-section__header">
             <h3 className="detail-section__title">
