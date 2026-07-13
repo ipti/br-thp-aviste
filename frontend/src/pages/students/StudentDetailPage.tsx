@@ -433,7 +433,8 @@ export const StudentDetailPage = () => {
                   acomp_miopia_progressiva: 'Miopia progressiva', acomp_ectasias_cornea: 'Ectasias de córnea',
                   acomp_alergias_conjuntivites: 'Alergias / Conjuntivites / Calázio', acomp_baixa_visao_central: 'Baixa visão central',
                 };
-                const selected = Object.entries(ACOMP_LABELS).filter(([k]) => (student as Record<string, unknown>)[k]);
+                const s = student as unknown as Record<string, unknown>;
+                const selected = Object.entries(ACOMP_LABELS).filter(([k]) => s[k]);
                 return selected.length > 0 ? (
                   <div className="consulta-view__block">
                     <p className="consulta-view__subtitle">Acompanhamento</p>
