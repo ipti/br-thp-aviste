@@ -4,12 +4,12 @@ import { Select } from '../../../../components/ui/Select';
 import { Button } from '../../../../components/ui/Button';
 import type { Student } from '../../api/studentsApi';
 
-const ACUIDADE_VALUES = ['1', '2', '3', '4', '5', '6', '7', '8', 'nenhum'] as const;
+const ACUIDADE_VALUES = ['1', '2', '3', '4', '5', '6', '7', 'nenhum'] as const;
 const TESTE_VALUES    = ['0', '1'] as const;
 
 const ACUIDADE_LABELS: Record<string, string> = {
-  '1': '20/200', '2': '20/100', '3': '20/80', '4': '20/60',
-  '5': '20/50',  '6': '20/40',  '7': '20/30', '8': '20/20',
+  '1': '20/100', '2': '20/63', '3': '20/50', '4': '20/40',
+  '5': '20/32',  '6': '20/25', '7': '20/20',
   'nenhum': 'Nenhum',
 };
 const ACUIDADE = ACUIDADE_VALUES.map((v) => ({ label: ACUIDADE_LABELS[v], value: v }));
@@ -42,8 +42,8 @@ interface Props {
 export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) => {
   const formik = useFormik({
     initialValues: {
-      acuidade_triagem_direito:  student.acuidade_triagem_direito  ?? '8',
-      acuidade_triagem_esquerdo: student.acuidade_triagem_esquerdo ?? '8',
+      acuidade_triagem_direito:  student.acuidade_triagem_direito  ?? '7',
+      acuidade_triagem_esquerdo: student.acuidade_triagem_esquerdo ?? '7',
       test_cover:                student.test_cover                ?? '0',
       test_movimento_ocular:     student.test_movimento_ocular     ?? '0',
       test_mancha_branca:        student.test_mancha_branca        ?? '0',

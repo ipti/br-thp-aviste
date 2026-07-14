@@ -3,9 +3,9 @@ import { Select } from '../../../../components/ui/Select';
 import { Button } from '../../../../components/ui/Button';
 
 const ACUIDADE = [
-  { label: '1', value: '1' }, { label: '2', value: '2' }, { label: '3', value: '3' },
-  { label: '4', value: '4' }, { label: '5', value: '5' }, { label: '6', value: '6' },
-  { label: '7', value: '7' }, { label: '8', value: '8' }, { label: 'Nenhum', value: 'nenhum' },
+  { label: '20/100', value: '1' }, { label: '20/63', value: '2' }, { label: '20/50', value: '3' },
+  { label: '20/40', value: '4' }, { label: '20/32', value: '5' }, { label: '20/25', value: '6' },
+  { label: '20/20', value: '7' }, { label: 'Nenhum', value: 'nenhum' },
 ];
 
 const PASSOU_FALHOU = [
@@ -26,8 +26,8 @@ interface Props {
 export const StepScreening = ({ onNext, loading, initial }: Props) => {
   const formik = useFormik({
     initialValues: {
-      acuidade_triagem_direito: (initial.acuidade_triagem_direito as string) ?? '8',
-      acuidade_triagem_esquerdo: (initial.acuidade_triagem_esquerdo as string) ?? '8',
+      acuidade_triagem_direito: (initial.acuidade_triagem_direito as string) ?? '7',
+      acuidade_triagem_esquerdo: (initial.acuidade_triagem_esquerdo as string) ?? '7',
       test_cover: (initial.test_cover as string) ?? '0',
       test_movimento_ocular: (initial.test_movimento_ocular as string) ?? '0',
       test_mancha_branca: (initial.test_mancha_branca as string) ?? '0',

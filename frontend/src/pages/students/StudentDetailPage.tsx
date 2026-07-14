@@ -16,8 +16,8 @@ import { StudentPrescriptionPDF } from './components/pdf/StudentPrescriptionPDF'
 import './styles.scss';
 
 const ACUIDADE_LABEL: Record<string, string> = {
-  '1': '20/200', '2': '20/100', '3': '20/80', '4': '20/60',
-  '5': '20/50',  '6': '20/40',  '7': '20/30', '8': '20/20',
+  '1': '20/100', '2': '20/63', '3': '20/50', '4': '20/40',
+  '5': '20/32',  '6': '20/25', '7': '20/20',
   'nenhum': 'Nenhum',
 };
 const SEX_LABEL   = ['Masculino', 'Feminino'];

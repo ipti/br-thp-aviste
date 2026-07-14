@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 
-const ACUIDADE = ['1', '2', '3', '4', '5', '6', '7', '8', 'nenhum'] as const;
+const ACUIDADE = ['1', '2', '3', '4', '5', '6', '7', 'nenhum'] as const;
 
 export class UpdateScreeningDto {
-  @ApiProperty({ enum: ACUIDADE, description: 'Resultado da acuidade — 1 (melhor) a 8 ou nenhum' })
+  @ApiProperty({ enum: ACUIDADE, description: 'Resultado da acuidade — 1 (20/100, pior) a 7 (20/20, melhor) ou nenhum' })
   @IsIn(ACUIDADE)
   acuidade_triagem_direito: string;
 

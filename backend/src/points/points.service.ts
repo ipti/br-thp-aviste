@@ -49,12 +49,13 @@ export class PointsService {
     if (s.test_movimento_ocular === '1') score += 1;
     if (s.test_mancha_branca === '1') score += 1;
 
-    const LOW = ['1', '2', '3', '4', '5', '6', '7'];
+    // Escala: 1=20/100 2=20/63 3=20/50 4=20/40 5=20/32 6=20/25 7=20/20
+    const LOW = ['1', '2', '3', '4'];
     const esq = s.acuidade_triagem_esquerdo ?? '';
     const dir = s.acuidade_triagem_direito ?? '';
 
-    if (LOW.includes(esq)) score += 5; else if (esq === '8' || esq === 'nenhum') score += 2;
-    if (LOW.includes(dir)) score += 5; else if (dir === '8' || dir === 'nenhum') score += 2;
+    if (LOW.includes(esq)) score += 5; else if (esq === '5' || esq === 'nenhum') score += 2;
+    if (LOW.includes(dir)) score += 5; else if (dir === '5' || dir === 'nenhum') score += 2;
 
     return score;
   }
