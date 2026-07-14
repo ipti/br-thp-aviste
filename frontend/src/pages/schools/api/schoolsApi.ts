@@ -3,7 +3,7 @@ import api from '../../../services/api';
 export interface School {
   id: number;
   name: string;
-  total_alunos_participantes?: number | null;
+  total_alunos_escola?: number | null;
   createdAt: string;
 }
 
@@ -24,7 +24,7 @@ export const schoolsApi = {
   create: (name: string): Promise<School> =>
     api.post<School>('/schools', { name }).then((r) => r.data),
 
-  update: (id: number, data: { name?: string; total_alunos_participantes?: number | null }): Promise<School> =>
+  update: (id: number, data: { name?: string; total_alunos_escola?: number | null }): Promise<School> =>
     api.put<School>(`/schools/${id}`, data).then((r) => r.data),
 
   remove: (id: number): Promise<void> =>

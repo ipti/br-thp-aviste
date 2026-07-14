@@ -37,7 +37,7 @@ export const SchoolDetailPage = () => {
   };
 
   const startEditParticipantes = () => {
-    setParticipantesValue(String(school?.total_alunos_participantes ?? ''));
+    setParticipantesValue(String(school?.total_alunos_escola ?? ''));
     setEditingParticipantes(true);
   };
 
@@ -45,7 +45,7 @@ export const SchoolDetailPage = () => {
     const num = participantesValue.trim() === '' ? null : parseInt(participantesValue, 10);
     if (participantesValue.trim() !== '' && isNaN(num!)) return;
     updateSchool(
-      { id, total_alunos_participantes: num },
+      { id, total_alunos_escola: num },
       { onSuccess: () => setEditingParticipantes(false) },
     );
   };
@@ -94,11 +94,6 @@ export const SchoolDetailPage = () => {
           <span className="school-stats__value">{stats?.total_consultations ?? '—'}</span>
           <span className="school-stats__label">Total de consultas</span>
         </div>
-        <div className="school-stats__card school-stats__card--orange">
-          <div className="school-stats__icon"><i className="pi pi-star" /></div>
-          <span className="school-stats__value">{stats?.students_5_to_12 ?? '—'}</span>
-          <span className="school-stats__label">Alunos entre 5 e 12 anos</span>
-        </div>
         <div className="school-stats__card school-stats__card--teal school-stats__card--editable">
           <div className="school-stats__card-header">
             <div className="school-stats__icon"><i className="pi pi-user-plus" /></div>
@@ -126,10 +121,10 @@ export const SchoolDetailPage = () => {
             </div>
           ) : (
             <span className="school-stats__value">
-              {school?.total_alunos_participantes != null ? school.total_alunos_participantes : '—'}
+              {school?.total_alunos_escola != null ? school.total_alunos_escola : '—'}
             </span>
           )}
-          <span className="school-stats__label">Alunos participantes</span>
+          <span className="school-stats__label">Total de alunos da escola</span>
         </div>
       </div>
 
