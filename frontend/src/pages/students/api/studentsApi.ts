@@ -181,6 +181,9 @@ export const studentsApi = {
   markGlassesDelivered: (id: number, data: UpdateGlassesDeliveryData): Promise<Student> =>
     api.put<Student>(`/students/${id}/glasses-delivered`, data).then((r) => r.data),
 
+  transfer: (id: number, classroom_fk: number): Promise<Student> =>
+    api.patch<Student>(`/students/${id}/transfer`, { classroom_fk }).then((r) => r.data),
+
   remove: (id: number): Promise<void> =>
     api.delete(`/students/${id}`).then(() => undefined),
 };

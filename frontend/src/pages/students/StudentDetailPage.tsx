@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { pdf } from '@react-pdf/renderer';
 import type { DocumentProps } from '@react-pdf/renderer';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useStudent, useUpdateBasic, useUpdateQuestionnaire, useUpdateScreening, useUpdatePrescription, useUpdateConsultation, useMarkGlassesDelivered } from './hooks/useStudents';
+import { useStudent, useUpdateBasic, useUpdateQuestionnaire, useUpdateScreening, useUpdatePrescription, useUpdateConsultation, useMarkGlassesDelivered, useTransferStudent } from './hooks/useStudents';
+import { useClassrooms } from '../classrooms/hooks/useClassrooms';
 import type { UpdateGlassesDeliveryData } from './api/studentsApi';
 import { Badge } from '../../components/ui/Badge';
 import { useAuth } from '../../hooks/useAuth';
@@ -76,6 +77,8 @@ export const StudentDetailPage = () => {
   const { isAdmin, isMedico, isTriador } = useAuth();
   const [openForm, setOpenForm] = useState<Section | null>(null);
   const [activeTab, setActiveTab] = useState<Section>('basic');
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [transferTarget, setTransferTarget] = useState(0);
 
   const switchTab = (tab: Section) => { setActiveTab(tab); setOpenForm(null); };
 
@@ -86,7 +89,10 @@ export const StudentDetailPage = () => {
   const { mutate: savePrescription,  isPending: savingP }  = useUpdatePrescription(id);
   const { mutate: saveConsultation,  isPending: savingC }  = useUpdateConsultation(id);
   const { mutate: markDelivered,     isPending: delivering } = useMarkGlassesDelivered(id);
+  const { mutate: transferStudent,   isPending: transferring } = useTransferStudent();
   const [exportingPrescription, setExportingPrescription] = useState(false);
+
+  const { data: classrooms = [] } = useClassrooms(student?.school_fk);
 
   if (isLoading) return <div className="loading-center"><i className="pi pi-spin pi-spinner" /></div>;
   if (!student) return null;
@@ -137,6 +143,17 @@ export const StudentDetailPage = () => {
           label={`${student.points} pts`}
           variant={student.points >= 10 ? 'danger' : student.points >= 5 ? 'warning' : 'neutral'}
         />
+        {isAdmin && (
+          <button
+            type="button"
+            className="btn-transfer"
+            onClick={() => setShowTransferModal(true)}
+            title="Transferir de turma"
+          >
+            <i className="pi pi-arrow-right-arrow-left" />
+            Transferir turma
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -541,6 +558,72 @@ export const StudentDetailPage = () => {
             <p className="detail-section__empty-msg">Entrega ainda não registrada</p>
           )}
         </section>
+      )}
+
+      {/* Modal de transferência de turma */}
+      {showTransferModal && (
+        <div className="modal-overlay" onClick={() => { setShowTransferModal(false); setTransferTarget(0); }}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-box__header">
+              <h2 className="modal-box__title">Transferir de turma</h2>
+              <button type="button" className="modal-box__close" onClick={() => { setShowTransferModal(false); setTransferTarget(0); }}>
+                <i className="pi pi-times" />
+              </button>
+            </div>
+            <div className="modal-box__body">
+              <div className="field-row" style={{ marginBottom: '1rem' }}>
+                <span className="field-row__label">Turma atual</span>
+                <span className="field-row__value">
+                  {classrooms.find((c) => c.id === student.classroom_fk)?.name ?? '—'}
+                </span>
+              </div>
+              <div className="detail-form__section">
+                <label className="detail-form__section-title" htmlFor="transfer-select">
+                  Transferir para
+                </label>
+                <select
+                  id="transfer-select"
+                  className="input__field"
+                  value={transferTarget}
+                  onChange={(e) => setTransferTarget(Number(e.target.value))}
+                  style={{ marginTop: '0.5rem' }}
+                >
+                  <option value={0}>Selecione a turma de destino...</option>
+                  {classrooms
+                    .filter((c) => c.id !== student.classroom_fk)
+                    .map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}{c.year ? ` (${c.year})` : ''}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            <div className="modal-box__footer">
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={() => { setShowTransferModal(false); setTransferTarget(0); }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn--primary"
+                disabled={!transferTarget || transferring}
+                onClick={() => {
+                  if (!transferTarget) return;
+                  transferStudent(
+                    { id: student.id, classroom_fk: transferTarget },
+                    { onSuccess: () => { setShowTransferModal(false); setTransferTarget(0); } },
+                  );
+                }}
+              >
+                {transferring ? <i className="pi pi-spin pi-spinner" /> : 'Confirmar transferência'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -55,6 +55,113 @@
   }
 }
 
+// ── Transfer button ───────────────────────────────────────────────────────────
+.btn-transfer {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: 0.3rem 0.875rem;
+  border: 1.5px solid $color-brand-primary;
+  border-radius: $radius-full;
+  background: none;
+  color: $color-brand-primary;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-fast;
+  white-space: nowrap;
+
+  &:hover { background: $color-brand-lightest; }
+
+  .pi { font-size: 0.8rem; }
+}
+
+// ── Transfer modal ─────────────────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+  width: 100%;
+  max-width: 440px;
+  margin: $spacing-4;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-5 $spacing-6 $spacing-4;
+    border-bottom: 1px solid $color-gray-200;
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: 700;
+    color: $color-gray-900;
+    margin: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: $color-gray-400;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: $spacing-1;
+    border-radius: $radius-sm;
+    &:hover { color: $color-gray-700; }
+  }
+
+  &__body {
+    padding: $spacing-5 $spacing-6;
+  }
+
+  &__footer {
+    display: flex;
+    gap: $spacing-3;
+    justify-content: flex-end;
+    padding: $spacing-4 $spacing-6 $spacing-5;
+    border-top: 1px solid $color-gray-100;
+  }
+}
+
+// ── Generic buttons ───────────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: 0.5rem 1.25rem;
+  border-radius: $radius-full;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background $transition-fast, opacity $transition-fast;
+  border: none;
+
+  &--ghost {
+    background: none;
+    border: 1.5px solid $color-gray-300;
+    color: $color-gray-700;
+    &:hover { background: $color-gray-100; }
+  }
+
+  &--primary {
+    background: $color-brand-primary;
+    color: $color-white;
+    &:hover:not(:disabled) { background: $color-brand-dark; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+}
+
 // ── Progress bar ──────────────────────────────────────────────────────────────
 .student-detail__progress {
   display: flex;

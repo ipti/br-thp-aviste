@@ -11,6 +11,7 @@ import { UpdatePrescriptionDto } from './dto/update-prescription.dto';
 import { UpdateQuestionnaireDto } from './dto/update-questionnaire.dto';
 import { UpdateScreeningDto } from './dto/update-screening.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { TransferStudentDto } from './dto/transfer-student.dto';
 
 @Injectable()
 export class StudentsService {
@@ -138,6 +139,17 @@ export class StudentsService {
         entrega_oculos_concluida: dto.entrega_oculos_confirmada,
       } as never,
     });
+  }
+
+  async transfer(id: number, dto: TransferStudentDto, user: JwtPayload): Promise<student_data> {
+    const student = await this.findOne(id, user);
+    const classroom = await this.prisma.classroom.findUnique({ where: { id: dto.classroom_fk } });
+    if (!classroom) throw new NotFoundException('Turma não encontrada');
+    if (classroom.school_fk !== student.school_fk)
+      throw new BadRequestException('A turma de destino não pertence à mesma escola do aluno');
+    if (dto.classroom_fk === student.classroom_fk)
+      throw new BadRequestException('O aluno já está nesta turma');
+    return this.prisma.student_data.update({ where: { id }, data: { classroom_fk: dto.classroom_fk } });
   }
 
   async remove(id: number, user: JwtPayload): Promise<void> {

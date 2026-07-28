@@ -96,6 +96,19 @@ export const useMarkGlassesDelivered = (id: number) => {
   });
 };
 
+export const useTransferStudent = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, classroom_fk }: { id: number; classroom_fk: number }) =>
+      studentsApi.transfer(id, classroom_fk),
+    onSuccess: (student) => {
+      qc.invalidateQueries({ queryKey: ['students'] });
+      qc.invalidateQueries({ queryKey: ['students', 'detail', student.id] });
+      toastService.success('Aluno transferido com sucesso');
+    },
+  });
+};
+
 export const useDeleteStudent = () => {
   const qc = useQueryClient();
   return useMutation({

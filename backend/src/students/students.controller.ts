@@ -1,4 +1,4 @@
-﻿import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
+﻿import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { CurrentUser, JwtPayload } from '../common/decorators/current-user.decorator';
@@ -13,6 +13,7 @@ import { UpdatePrescriptionDto } from './dto/update-prescription.dto';
 import { UpdateConsultationDto } from './dto/update-consultation.dto';
 import { UpdateGlassesDeliveryDto } from './dto/update-glasses-delivery.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { TransferStudentDto } from './dto/transfer-student.dto';
 import { StudentResponseDto } from './dto/student-response.dto';
 
 @ApiTags('students')
@@ -65,6 +66,17 @@ export class StudentsController {
     @CurrentUser() user: JwtPayload,
   ): Promise<StudentResponseDto> {
     return this.studentsService.update(id, dto, user) as Promise<StudentResponseDto>;
+  }
+
+  @Patch(':id/transfer')
+  @Roles(Role.ADMIN)
+  @ApiOkResponse({ type: StudentResponseDto })
+  transfer(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: TransferStudentDto,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<StudentResponseDto> {
+    return this.studentsService.transfer(id, dto, user) as Promise<StudentResponseDto>;
   }
 
   @Put(':id/questionnaire')
