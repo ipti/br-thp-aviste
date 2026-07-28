@@ -6,6 +6,7 @@ import { useStudent, useUpdateBasic, useUpdateQuestionnaire, useUpdateScreening,
 import { useClassrooms } from '../classrooms/hooks/useClassrooms';
 import type { UpdateGlassesDeliveryData } from './api/studentsApi';
 import { Badge } from '../../components/ui/Badge';
+import { Select } from '../../components/ui/Select';
 import { useAuth } from '../../hooks/useAuth';
 import { BasicInfoForm } from './components/forms/BasicInfoForm';
 import { QuestionnaireForm } from './components/forms/QuestionnaireForm';
@@ -577,27 +578,16 @@ export const StudentDetailPage = () => {
                   {classrooms.find((c) => c.id === student.classroom_fk)?.name ?? '—'}
                 </span>
               </div>
-              <div className="detail-form__section">
-                <label className="detail-form__section-title" htmlFor="transfer-select">
-                  Transferir para
-                </label>
-                <select
-                  id="transfer-select"
-                  className="input__field"
-                  value={transferTarget}
-                  onChange={(e) => setTransferTarget(Number(e.target.value))}
-                  style={{ marginTop: '0.5rem' }}
-                >
-                  <option value={0}>Selecione a turma de destino...</option>
-                  {classrooms
-                    .filter((c) => c.id !== student.classroom_fk)
-                    .map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}{c.year ? ` (${c.year})` : ''}
-                      </option>
-                    ))}
-                </select>
-              </div>
+              <Select
+                id="transfer-select"
+                label="Transferir para"
+                value={transferTarget || null}
+                onChange={(v) => setTransferTarget(Number(v))}
+                placeholder="Selecione a turma de destino..."
+                options={classrooms
+                  .filter((c) => c.id !== student.classroom_fk)
+                  .map((c) => ({ value: c.id, label: c.name + (c.year ? ` (${c.year})` : '') }))}
+              />
             </div>
             <div className="modal-box__footer">
               <button
