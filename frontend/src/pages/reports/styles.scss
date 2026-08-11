@@ -61,22 +61,51 @@
     gap: $spacing-3;
   }
 
-  &__filter-bar {
+  &__filter-trigger {
     display: flex;
-    align-items: flex-start;
-    gap: $spacing-6;
-    background: $color-white;
-    border: 1px solid $color-gray-200;
-    border-radius: $radius-lg;
-    padding: $spacing-4 $spacing-5;
+    align-items: center;
+    gap: $spacing-2;
     margin-bottom: $spacing-6;
-    box-shadow: $shadow-sm;
+    flex-wrap: wrap;
+  }
+
+  &__filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-1;
+    padding: $spacing-1 $spacing-3;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &__filter-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: $color-gray-400;
+    cursor: pointer;
+    border-radius: $radius-full;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: $color-gray-100;
+      color: $color-gray-700;
+    }
+
+    i { font-size: 12px; }
   }
 
   &__filter-grid {
-    flex: 1;
     display: grid;
-    grid-template-columns: 120px 1fr 1fr;
+    grid-template-columns: 140px 1fr 1fr;
     gap: $spacing-2 $spacing-3;
     align-items: center;
   }
@@ -123,20 +152,9 @@
     }
   }
 
-  &__filter-actions {
+  &__modal-footer {
     display: flex;
-    flex-direction: column;
+    justify-content: flex-end;
     gap: $spacing-2;
-    padding-top: 28px; // align with inputs (header row height)
-  }
-
-  &__filter-active {
-    font-size: $font-size-sm;
-    color: $color-gray-500;
-    margin-bottom: $spacing-5;
-    padding: $spacing-2 $spacing-4;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: $radius-md;
   }
 }

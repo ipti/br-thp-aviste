@@ -8,6 +8,7 @@ import { Table } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Select } from '../../components/ui/Select';
+import { Modal } from '../../components/ui/Modal';
 import type { DocumentProps } from '@react-pdf/renderer';
 import { GeneralReportPDF } from './components/pdf/GeneralReportPDF';
 import { ConsultationsReportPDF } from './components/pdf/ConsultationsReportPDF';
@@ -53,6 +54,7 @@ export const ReportsDashboard = () => {
   const [entregaStart, setEntregaStart] = useState('');
   const [entregaEnd,   setEntregaEnd]   = useState('');
   const [appliedFilter, setAppliedFilter] = useState<ReportFilter | undefined>(undefined);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   const anyFilter = startDate || triagemStart || consultaStart || entregaStart;
 
@@ -63,6 +65,7 @@ export const ReportsDashboard = () => {
     if (consultaStart && consultaEnd){ f.consultaStart = consultaStart; f.consultaEnd = consultaEnd; }
     if (entregaStart && entregaEnd) { f.entregaStart = entregaStart; f.entregaEnd = entregaEnd; }
     setAppliedFilter(Object.keys(f).length ? f : undefined);
+    setShowFilterModal(false);
   };
 
   const handleClearFilter = () => {
@@ -71,6 +74,7 @@ export const ReportsDashboard = () => {
     setConsultaStart(''); setConsultaEnd('');
     setEntregaStart(''); setEntregaEnd('');
     setAppliedFilter(undefined);
+    setShowFilterModal(false);
   };
 
   const { data: generalData = [], isLoading: loadingGeneral } = useQuery({
@@ -121,19 +125,68 @@ export const ReportsDashboard = () => {
     <div className="reports-page">
       <h1 className="page-title">Relatórios</h1>
 
-      {/* Filtro de data */}
-      <div className="reports-page__filter-bar">
+      {/* Botão de filtro */}
+      <div className="reports-page__filter-trigger">
+        <Button
+          label="Filtrar"
+          icon={appliedFilter ? 'pi pi-filter-fill' : 'pi pi-filter'}
+          variant={appliedFilter ? 'primary' : 'secondary'}
+          size="sm"
+          onClick={() => setShowFilterModal(true)}
+        />
+        {appliedFilter && (
+          <>
+            {appliedFilter.startDate && (
+              <span className="reports-page__filter-chip">
+                Cadastro: {appliedFilter.startDate.split('-').reverse().join('/')} – {appliedFilter.endDate!.split('-').reverse().join('/')}
+              </span>
+            )}
+            {appliedFilter.triagemStart && (
+              <span className="reports-page__filter-chip">
+                Triagem: {appliedFilter.triagemStart.split('-').reverse().join('/')} – {appliedFilter.triagemEnd!.split('-').reverse().join('/')}
+              </span>
+            )}
+            {appliedFilter.consultaStart && (
+              <span className="reports-page__filter-chip">
+                Consulta: {appliedFilter.consultaStart.split('-').reverse().join('/')} – {appliedFilter.consultaEnd!.split('-').reverse().join('/')}
+              </span>
+            )}
+            {appliedFilter.entregaStart && (
+              <span className="reports-page__filter-chip">
+                Entrega: {appliedFilter.entregaStart.split('-').reverse().join('/')} – {appliedFilter.entregaEnd!.split('-').reverse().join('/')}
+              </span>
+            )}
+            <button className="reports-page__filter-clear" onClick={handleClearFilter} title="Remover todos os filtros">
+              <i className="pi pi-times" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Modal de filtro */}
+      <Modal
+        visible={showFilterModal}
+        onHide={() => setShowFilterModal(false)}
+        title="Filtrar por período"
+        width="560px"
+        footer={
+          <div className="reports-page__modal-footer">
+            <Button label="Limpar" icon="pi pi-times" size="sm" variant="secondary" onClick={handleClearFilter} />
+            <Button label="Aplicar" icon="pi pi-check" size="sm" disabled={!anyFilter} onClick={handleApplyFilter} />
+          </div>
+        }
+      >
         <div className="reports-page__filter-grid">
           <div className="reports-page__filter-grid-header">
             <span />
-            <span className="reports-page__filter-col-label">Início</span>
-            <span className="reports-page__filter-col-label">Fim</span>
+            <span>Início</span>
+            <span>Fim</span>
           </div>
           {([
-            { label: 'Cadastro',  start: startDate,    end: endDate,      setStart: setStartDate,    setEnd: setEndDate },
-            { label: 'Triagem',   start: triagemStart, end: triagemEnd,   setStart: setTriagemStart, setEnd: setTriagemEnd },
-            { label: 'Consulta',  start: consultaStart,end: consultaEnd,  setStart: setConsultaStart,setEnd: setConsultaEnd },
-            { label: 'Entrega',   start: entregaStart, end: entregaEnd,   setStart: setEntregaStart, setEnd: setEntregaEnd },
+            { label: 'Cadastro do aluno',  start: startDate,    end: endDate,      setStart: setStartDate,    setEnd: setEndDate },
+            { label: 'Triagem visual',     start: triagemStart, end: triagemEnd,   setStart: setTriagemStart, setEnd: setTriagemEnd },
+            { label: 'Consulta médica',    start: consultaStart,end: consultaEnd,  setStart: setConsultaStart,setEnd: setConsultaEnd },
+            { label: 'Entrega de óculos',  start: entregaStart, end: entregaEnd,   setStart: setEntregaStart, setEnd: setEntregaEnd },
           ] as const).map((row) => (
             <div key={row.label} className="reports-page__filter-grid-row">
               <span className="reports-page__filter-row-label">{row.label}</span>
@@ -144,25 +197,7 @@ export const ReportsDashboard = () => {
             </div>
           ))}
         </div>
-        <div className="reports-page__filter-actions">
-          <Button label="Aplicar" icon="pi pi-filter" size="sm"
-            disabled={!anyFilter} onClick={handleApplyFilter} />
-          {appliedFilter && (
-            <Button label="Limpar" icon="pi pi-times" size="sm"
-              variant="secondary" onClick={handleClearFilter} />
-          )}
-        </div>
-      </div>
-
-      {appliedFilter && (
-        <p className="reports-page__filter-active">
-          Filtro ativo
-          {appliedFilter.startDate    && <> · Cadastro: <strong>{appliedFilter.startDate.split('-').reverse().join('/')} – {appliedFilter.endDate!.split('-').reverse().join('/')}</strong></>}
-          {appliedFilter.triagemStart && <> · Triagem: <strong>{appliedFilter.triagemStart.split('-').reverse().join('/')} – {appliedFilter.triagemEnd!.split('-').reverse().join('/')}</strong></>}
-          {appliedFilter.consultaStart && <> · Consulta: <strong>{appliedFilter.consultaStart.split('-').reverse().join('/')} – {appliedFilter.consultaEnd!.split('-').reverse().join('/')}</strong></>}
-          {appliedFilter.entregaStart && <> · Entrega: <strong>{appliedFilter.entregaStart.split('-').reverse().join('/')} – {appliedFilter.entregaEnd!.split('-').reverse().join('/')}</strong></>}
-        </p>
-      )}
+      </Modal>
 
       {/* KPIs */}
       <div className="reports-page__kpis">
