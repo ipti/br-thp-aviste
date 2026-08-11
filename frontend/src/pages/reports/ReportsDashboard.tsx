@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { pdf } from '@react-pdf/renderer';
-import { reportsApi, type SchoolReport } from './api/reportsApi';
+import { reportsApi, type SchoolReport, type ReportFilter, type ReportFilterField } from './api/reportsApi';
 import { useConsultations } from '../consultations/hooks/useConsultations';
 import { useSchools } from '../schools/hooks/useSchools';
 import { Table } from '../../components/ui/Table';
@@ -37,14 +37,41 @@ const downloadPdf = async (element: React.ReactElement<DocumentProps>, filename:
   URL.revokeObjectURL(url);
 };
 
+const FILTER_FIELD_OPTIONS = [
+  { value: 'createdAt',             label: 'Data de cadastro' },
+  { value: 'data_triagem',          label: 'Data de triagem' },
+  { value: 'data_consulta',         label: 'Data de consulta' },
+  { value: 'data_entrega_oculos',   label: 'Data de entrega dos óculos' },
+];
+
 export const ReportsDashboard = () => {
   const [consultSchoolId, setConsultSchoolId] = useState<number | null>(null);
   const [exportingGeneral, setExportingGeneral] = useState(false);
   const [exportingConsult, setExportingConsult] = useState(false);
 
+  // Date filter state
+  const [filterField, setFilterField] = useState<ReportFilterField | null>(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [appliedFilter, setAppliedFilter] = useState<ReportFilter | undefined>(undefined);
+
+  const filterReady = filterField && startDate && endDate && startDate <= endDate;
+
+  const handleApplyFilter = () => {
+    if (!filterReady) return;
+    setAppliedFilter({ filterField: filterField!, startDate, endDate });
+  };
+
+  const handleClearFilter = () => {
+    setFilterField(null);
+    setStartDate('');
+    setEndDate('');
+    setAppliedFilter(undefined);
+  };
+
   const { data: generalData = [], isLoading: loadingGeneral } = useQuery({
-    queryKey: ['reports', 'general'],
-    queryFn: reportsApi.general,
+    queryKey: ['reports', 'general', appliedFilter],
+    queryFn: () => reportsApi.general(appliedFilter),
   });
   const { data: consultData = [], isLoading: loadingConsult } = useConsultations(consultSchoolId ?? undefined);
   const { data: schools = [] } = useSchools();
@@ -89,6 +116,69 @@ export const ReportsDashboard = () => {
   return (
     <div className="reports-page">
       <h1 className="page-title">Relatórios</h1>
+
+      {/* Filtro de data */}
+      <div className="reports-page__filter-bar">
+        <div className="reports-page__filter-fields">
+          <div className="reports-page__filter-field">
+            <Select
+              id="filter-field"
+              label="Filtrar por"
+              value={filterField}
+              onChange={(v) => setFilterField(v as ReportFilterField | null)}
+              options={FILTER_FIELD_OPTIONS}
+              placeholder="Selecione..."
+            />
+          </div>
+          <div className="reports-page__filter-date">
+            <label className="reports-page__date-label">Data inicial</label>
+            <input
+              type="date"
+              className="reports-page__date-input"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              disabled={!filterField}
+            />
+          </div>
+          <div className="reports-page__filter-date">
+            <label className="reports-page__date-label">Data final</label>
+            <input
+              type="date"
+              className="reports-page__date-input"
+              value={endDate}
+              min={startDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              disabled={!filterField}
+            />
+          </div>
+        </div>
+        <div className="reports-page__filter-actions">
+          <Button
+            label="Aplicar filtro"
+            icon="pi pi-filter"
+            size="sm"
+            disabled={!filterReady}
+            onClick={handleApplyFilter}
+          />
+          {appliedFilter && (
+            <Button
+              label="Limpar"
+              icon="pi pi-times"
+              size="sm"
+              variant="secondary"
+              onClick={handleClearFilter}
+            />
+          )}
+        </div>
+      </div>
+
+      {appliedFilter && (
+        <p className="reports-page__filter-active">
+          Filtrando por <strong>{FILTER_FIELD_OPTIONS.find(o => o.value === appliedFilter.filterField)?.label}</strong>
+          {' '}de <strong>{appliedFilter.startDate.split('-').reverse().join('/')}</strong>
+          {' '}até <strong>{appliedFilter.endDate.split('-').reverse().join('/')}</strong>
+        </p>
+      )}
 
       {/* KPIs */}
       <div className="reports-page__kpis">

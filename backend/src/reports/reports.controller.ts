@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -6,6 +6,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ReportsService } from './reports.service';
 import { SchoolReportDto } from './dto/general-report-response.dto';
+import { GeneralReportFilterDto } from './dto/general-report-filter.dto';
 
 @ApiTags('reports')
 @ApiBearerAuth()
@@ -17,7 +18,7 @@ export class ReportsController {
   @Get('general')
   @Roles(Role.ADMIN)
   @ApiOkResponse({ type: [SchoolReportDto] })
-  generalReport(): Promise<SchoolReportDto[]> {
-    return this.reportsService.generalReport();
+  generalReport(@Query() filter: GeneralReportFilterDto): Promise<SchoolReportDto[]> {
+    return this.reportsService.generalReport(filter);
   }
 }

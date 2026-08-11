@@ -60,4 +60,80 @@
     align-items: flex-end;
     gap: $spacing-3;
   }
+
+  &__filter-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: $spacing-4;
+    flex-wrap: wrap;
+    background: $color-white;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-lg;
+    padding: $spacing-4 $spacing-5;
+    margin-bottom: $spacing-6;
+    box-shadow: $shadow-sm;
+  }
+
+  &__filter-fields {
+    display: flex;
+    align-items: flex-end;
+    gap: $spacing-3;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  &__filter-field {
+    min-width: 220px;
+  }
+
+  &__filter-date {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+  }
+
+  &__date-label {
+    font-size: $font-size-xs;
+    font-weight: 500;
+    color: $color-gray-500;
+  }
+
+  &__date-input {
+    height: 38px;
+    padding: 0 $spacing-3;
+    border: 1px solid $color-gray-300;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    color: $color-gray-900;
+    background: $color-white;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: $color-brand-primary;
+      box-shadow: 0 0 0 3px rgba($color-brand-primary, 0.12);
+    }
+
+    &:disabled {
+      background: $color-gray-50;
+      color: $color-gray-400;
+      cursor: not-allowed;
+    }
+  }
+
+  &__filter-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: $spacing-2;
+  }
+
+  &__filter-active {
+    font-size: $font-size-sm;
+    color: $color-gray-500;
+    margin-bottom: $spacing-5;
+    padding: $spacing-2 $spacing-4;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: $radius-md;
+  }
 }

@@ -104,10 +104,14 @@ export class StudentsService {
   }
 
   async updateScreening(id: number, dto: UpdateScreeningDto, user: JwtPayload): Promise<student_data> {
-    await this.findOne(id, user);
+    const existing = await this.findOne(id, user);
     const updated = await this.prisma.student_data.update({
       where: { id },
-      data: { ...dto, triagem_concluida: true },
+      data: {
+        ...dto,
+        triagem_concluida: true,
+        data_triagem: existing.data_triagem ?? new Date(),
+      },
     });
     const points = this.pointsService.calculate(updated);
     return this.prisma.student_data.update({ where: { id }, data: { points } });

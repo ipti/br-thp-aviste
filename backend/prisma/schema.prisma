@@ -144,6 +144,7 @@ model student_data {
   test_mancha_branca        String? @db.VarChar(1)
   atendimento_oftalmologico_previo String? @db.VarChar(1) // "0"=não | "1"=sim
   observacao_triagem               String? @db.Text
+  data_triagem                     DateTime?
 
   // Receita de óculos
   receita_esferico_od   String? @db.VarChar(20)

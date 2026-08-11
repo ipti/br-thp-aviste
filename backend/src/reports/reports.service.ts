@@ -2,20 +2,41 @@ import { Injectable } from '@nestjs/common';
 import { student_data } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SchoolReportDto } from './dto/general-report-response.dto';
+import { GeneralReportFilterDto } from './dto/general-report-filter.dto';
+
+// Parse DD/MM/YYYY → Date (midnight local)
+function parseBrDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const [d, m, y] = value.split('/');
+  if (!d || !m || !y) return null;
+  return new Date(Number(y), Number(m) - 1, Number(d));
+}
+
+function endOfDay(iso: string): Date {
+  const d = new Date(iso);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
 
 @Injectable()
 export class ReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async generalReport(): Promise<SchoolReportDto[]> {
+  async generalReport(filter?: GeneralReportFilterDto): Promise<SchoolReportDto[]> {
+    const hasFilter = filter?.filterField && filter?.startDate && filter?.endDate;
+    const start = hasFilter ? new Date(filter.startDate!) : null;
+    const end   = hasFilter ? endOfDay(filter.endDate!) : null;
+
     const schools = await this.prisma.school.findMany({ orderBy: { name: 'asc' } });
 
     return Promise.all(
       schools.map(async (school) => {
-        const [students, countClassroom] = await Promise.all([
+        const [allStudents, countClassroom] = await Promise.all([
           this.prisma.student_data.findMany({ where: { school_fk: school.id } }),
           this.prisma.classroom.count({ where: { school_fk: school.id } }),
         ]);
+
+        const students = hasFilter ? this.applyFilter(allStudents, filter.filterField!, start!, end!) : allStudents;
 
         return {
           schoolId: school.id,
@@ -31,6 +52,30 @@ export class ReportsService {
         };
       }),
     );
+  }
+
+  private applyFilter(
+    students: student_data[],
+    field: GeneralReportFilterDto['filterField'],
+    start: Date,
+    end: Date,
+  ): student_data[] {
+    return students.filter((s) => {
+      let date: Date | null = null;
+
+      if (field === 'createdAt') {
+        date = s.createdAt;
+      } else if (field === 'data_triagem') {
+        date = s.data_triagem ?? null;
+      } else if (field === 'data_consulta') {
+        date = parseBrDate(s.data_consulta);
+      } else if (field === 'data_entrega_oculos') {
+        date = parseBrDate(s.data_entrega_oculos);
+      }
+
+      if (!date) return false;
+      return date >= start && date <= end;
+    });
   }
 
   private countQuestionnaire(students: student_data[]): number {
