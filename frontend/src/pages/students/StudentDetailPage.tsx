@@ -322,6 +322,9 @@ export const StudentDetailPage = () => {
             <p className="detail-section__empty-msg">Triagem visual ainda não preenchida</p>
           ) : (
             <div className="detail-section__grid">
+              {student.data_triagem && (
+                <FieldRow label="Data da triagem" value={new Date(student.data_triagem).toLocaleDateString('pt-BR')} />
+              )}
               <FieldRow label="Acuidade OD"   value={ACUIDADE_LABEL[student.acuidade_triagem_direito  ?? ''] ?? student.acuidade_triagem_direito  ?? '—'} />
               <FieldRow label="Acuidade OE"   value={ACUIDADE_LABEL[student.acuidade_triagem_esquerdo ?? ''] ?? student.acuidade_triagem_esquerdo ?? '—'} />
               <FieldRow label="Teste cover"   value={student.test_cover === '0' ? 'Passou' : student.test_cover === '1' ? 'Falhou' : '—'} />

@@ -52,6 +52,7 @@ export interface Student {
   artrite_artrose?: boolean;
   alergias_corticoides?: boolean;
   // triagem
+  data_triagem?: string;
   acuidade_triagem_direito?: string;
   acuidade_triagem_esquerdo?: string;
   test_cover?: string;
