@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { pdf } from '@react-pdf/renderer';
-import { reportsApi, type SchoolReport, type ReportFilter, type ReportFilterField } from './api/reportsApi';
+import { reportsApi, type SchoolReport, type ReportFilter } from './api/reportsApi';
 import { useConsultations } from '../consultations/hooks/useConsultations';
 import { useSchools } from '../schools/hooks/useSchools';
 import { Table } from '../../components/ui/Table';
@@ -37,12 +37,6 @@ const downloadPdf = async (element: React.ReactElement<DocumentProps>, filename:
   URL.revokeObjectURL(url);
 };
 
-const FILTER_FIELD_OPTIONS = [
-  { value: 'createdAt',             label: 'Data de cadastro' },
-  { value: 'data_triagem',          label: 'Data de triagem' },
-  { value: 'data_consulta',         label: 'Data de consulta' },
-  { value: 'data_entrega_oculos',   label: 'Data de entrega dos óculos' },
-];
 
 export const ReportsDashboard = () => {
   const [consultSchoolId, setConsultSchoolId] = useState<number | null>(null);
@@ -50,20 +44,18 @@ export const ReportsDashboard = () => {
   const [exportingConsult, setExportingConsult] = useState(false);
 
   // Date filter state
-  const [filterField, setFilterField] = useState<ReportFilterField | null>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [appliedFilter, setAppliedFilter] = useState<ReportFilter | undefined>(undefined);
 
-  const filterReady = filterField && startDate && endDate && startDate <= endDate;
+  const filterReady = startDate && endDate && startDate <= endDate;
 
   const handleApplyFilter = () => {
     if (!filterReady) return;
-    setAppliedFilter({ filterField: filterField!, startDate, endDate });
+    setAppliedFilter({ startDate, endDate });
   };
 
   const handleClearFilter = () => {
-    setFilterField(null);
     setStartDate('');
     setEndDate('');
     setAppliedFilter(undefined);
@@ -120,16 +112,6 @@ export const ReportsDashboard = () => {
       {/* Filtro de data */}
       <div className="reports-page__filter-bar">
         <div className="reports-page__filter-fields">
-          <div className="reports-page__filter-field">
-            <Select
-              id="filter-field"
-              label="Filtrar por"
-              value={filterField}
-              onChange={(v) => setFilterField(v as ReportFilterField | null)}
-              options={FILTER_FIELD_OPTIONS}
-              placeholder="Selecione..."
-            />
-          </div>
           <div className="reports-page__filter-date">
             <label className="reports-page__date-label">Data inicial</label>
             <input
@@ -137,7 +119,6 @@ export const ReportsDashboard = () => {
               className="reports-page__date-input"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              disabled={!filterField}
             />
           </div>
           <div className="reports-page__filter-date">
@@ -148,7 +129,6 @@ export const ReportsDashboard = () => {
               value={endDate}
               min={startDate}
               onChange={(e) => setEndDate(e.target.value)}
-              disabled={!filterField}
             />
           </div>
         </div>
@@ -174,8 +154,7 @@ export const ReportsDashboard = () => {
 
       {appliedFilter && (
         <p className="reports-page__filter-active">
-          Filtrando por <strong>{FILTER_FIELD_OPTIONS.find(o => o.value === appliedFilter.filterField)?.label}</strong>
-          {' '}de <strong>{appliedFilter.startDate.split('-').reverse().join('/')}</strong>
+          Período de <strong>{appliedFilter.startDate.split('-').reverse().join('/')}</strong>
           {' '}até <strong>{appliedFilter.endDate.split('-').reverse().join('/')}</strong>
         </p>
       )}

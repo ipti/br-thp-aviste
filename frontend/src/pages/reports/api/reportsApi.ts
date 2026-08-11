@@ -13,10 +13,7 @@ export interface SchoolReport {
   countEntregaOculosCompleted: number;
 }
 
-export type ReportFilterField = 'createdAt' | 'data_triagem' | 'data_consulta' | 'data_entrega_oculos';
-
 export interface ReportFilter {
-  filterField: ReportFilterField;
   startDate: string; // YYYY-MM-DD
   endDate: string;   // YYYY-MM-DD
 }

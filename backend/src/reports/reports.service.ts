@@ -15,7 +15,7 @@ export class ReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async generalReport(filter?: GeneralReportFilterDto): Promise<SchoolReportDto[]> {
-    const hasFilter = filter?.filterField && filter?.startDate && filter?.endDate;
+    const hasFilter = filter?.startDate && filter?.endDate;
     const start = hasFilter ? new Date(filter.startDate!) : null;
     const end   = hasFilter ? endOfDay(filter.endDate!) : null;
 
@@ -28,7 +28,9 @@ export class ReportsService {
           this.prisma.classroom.count({ where: { school_fk: school.id } }),
         ]);
 
-        const students = hasFilter ? this.applyFilter(allStudents, filter.filterField!, start!, end!) : allStudents;
+        const students = hasFilter
+          ? allStudents.filter((s) => s.createdAt >= start! && s.createdAt <= end!)
+          : allStudents;
 
         return {
           schoolId: school.id,
@@ -44,30 +46,6 @@ export class ReportsService {
         };
       }),
     );
-  }
-
-  private applyFilter(
-    students: student_data[],
-    field: GeneralReportFilterDto['filterField'],
-    start: Date,
-    end: Date,
-  ): student_data[] {
-    return students.filter((s) => {
-      let date: Date | null = null;
-
-      if (field === 'createdAt') {
-        date = s.createdAt;
-      } else if (field === 'data_triagem') {
-        date = s.data_triagem ?? null;
-      } else if (field === 'data_consulta') {
-        date = s.data_consulta ?? null;
-      } else if (field === 'data_entrega_oculos') {
-        date = s.data_entrega_oculos ?? null;
-      }
-
-      if (!date) return false;
-      return date >= start && date <= end;
-    });
   }
 
   private countQuestionnaire(students: student_data[]): number {
