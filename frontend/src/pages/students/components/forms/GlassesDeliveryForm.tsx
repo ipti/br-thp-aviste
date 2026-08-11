@@ -2,17 +2,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Input } from '../../../../components/ui/Input';
 import { Button } from '../../../../components/ui/Button';
+import { isoToBr, brToIso } from '../../../../utils/formatDate';
 import type { Student } from '../../api/studentsApi';
-
-const isoToBr = (iso?: string): string => {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-};
-const brToIso = (br: string): string => {
-  if (!br || br.length < 10) return br;
-  const [d, m, y] = br.split('/');
-  return `${y}-${m}-${d}`;
-};
 
 const schema = yup.object({
   data_entrega_oculos: yup.string().required('Obrigatório'),

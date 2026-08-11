@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import { Input } from '../../../../components/ui/Input';
 import { Select } from '../../../../components/ui/Select';
 import { Button } from '../../../../components/ui/Button';
+import { isoToBr, brToIso } from '../../../../utils/formatDate';
 import type { Student } from '../../api/studentsApi';
 
 const SIM_NAO = [
@@ -25,17 +26,6 @@ const ACOMPANHAMENTOS: { key: string; label: string }[] = [
   { key: 'acomp_baixa_visao_central',    label: 'Baixa visão central' },
 ];
 
-// ISO DateTime → DD/MM/YYYY for input display
-const isoToBr = (iso?: string): string => {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-};
-// DD/MM/YYYY → YYYY-MM-DD for API
-const brToIso = (br: string): string => {
-  if (!br || br.length < 10) return br;
-  const [d, m, y] = br.split('/');
-  return `${y}-${m}-${d}`;
-};
 
 const schema = yup.object({
   data_consulta: yup.string().required('Obrigatório'),

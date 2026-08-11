@@ -1,5 +1,6 @@
 import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer';
 import logo from '../../../../assets/Logo.png';
+import { formatDate } from '../../../../utils/formatDate';
 import type { Student } from '../../api/studentsApi';
 
 const s = StyleSheet.create({
@@ -110,7 +111,7 @@ export const StudentPrescriptionPDF = ({ student, emittedAt }: Props) => (
         <View>
           <Text style={s.patientName}>Nome: {student.name}</Text>
           <Text style={s.headerLine}>Data de Nascimento: {student.birthday || '—'}</Text>
-          <Text style={s.headerLine}>Data da consulta: {student.data_consulta ? new Date(student.data_consulta).toLocaleDateString('pt-BR') : '—'}</Text>
+          <Text style={s.headerLine}>Data da consulta: {formatDate(student.data_consulta) || '—'}</Text>
           <Text style={s.headerLine}>Médico: {student.nome_medico || '—'}</Text>
           <Text style={s.headerLine}>CRM: {student.crm_medico || '—'}</Text>
         </View>
