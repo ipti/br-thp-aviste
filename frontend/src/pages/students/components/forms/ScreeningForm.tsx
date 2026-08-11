@@ -76,7 +76,6 @@ export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) =
               value={formik.values.data_triagem}
               onChange={(e) => formik.setFieldValue('data_triagem', e.value)}
               dateFormat="dd/mm/yy"
-              locale="pt-BR"
               showIcon
               maxDate={new Date()}
               className={formik.touched.data_triagem && formik.errors.data_triagem ? 'p-invalid' : ''}
