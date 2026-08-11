@@ -15,6 +15,7 @@ import { PrescriptionForm } from './components/forms/PrescriptionForm';
 import { ConsultationForm } from './components/forms/ConsultationForm';
 import { GlassesDeliveryForm } from './components/forms/GlassesDeliveryForm';
 import { StudentPrescriptionPDF } from './components/pdf/StudentPrescriptionPDF';
+import { StudentConsultationPDF } from './components/pdf/StudentConsultationPDF';
 import './styles.scss';
 
 const ACUIDADE_LABEL: Record<string, string> = {
@@ -92,6 +93,7 @@ export const StudentDetailPage = () => {
   const { mutate: markDelivered,     isPending: delivering } = useMarkGlassesDelivered(id);
   const { mutate: transferStudent,   isPending: transferring } = useTransferStudent();
   const [exportingPrescription, setExportingPrescription] = useState(false);
+  const [exportingConsultation, setExportingConsultation] = useState(false);
 
   const { data: classrooms = [] } = useClassrooms(student?.school_fk);
 
@@ -120,6 +122,18 @@ export const StudentDetailPage = () => {
       );
     } finally {
       setExportingPrescription(false);
+    }
+  };
+
+  const handleExportConsultation = async () => {
+    setExportingConsultation(true);
+    try {
+      await downloadPdf(
+        <StudentConsultationPDF student={student} emittedAt={nowLabel()} />,
+        `consulta-${student.name.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.pdf`,
+      );
+    } finally {
+      setExportingConsultation(false);
     }
   };
 
@@ -333,11 +347,23 @@ export const StudentDetailPage = () => {
               Consulta Médica
               {student.consulta_concluida && <i className="pi pi-check-circle detail-section__done" />}
             </h3>
-            {openForm !== 'consultation' && (
-              <button type="button" className="detail-section__edit-btn" onClick={() => setOpenForm('consultation')}>
-                {student.consulta_concluida ? 'Editar' : 'Preencher'}
-              </button>
-            )}
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              {student.consulta_concluida && (
+                <button
+                  type="button"
+                  className="detail-section__edit-btn"
+                  onClick={handleExportConsultation}
+                  disabled={exportingConsultation}
+                >
+                  {exportingConsultation ? 'Gerando PDF...' : 'Gerar Consulta PDF'}
+                </button>
+              )}
+              {openForm !== 'consultation' && (
+                <button type="button" className="detail-section__edit-btn" onClick={() => setOpenForm('consultation')}>
+                  {student.consulta_concluida ? 'Editar' : 'Preencher'}
+                </button>
+              )}
+            </div>
           </div>
           {openForm === 'consultation' ? (
             <ConsultationForm
