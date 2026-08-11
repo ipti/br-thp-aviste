@@ -157,7 +157,7 @@ model student_data {
   receita_dp            String? @db.VarChar(20)
 
   // Dados da consulta médica
-  data_consulta String? @db.VarChar(20)
+  data_consulta DateTime?
   crm_medico    String? @db.VarChar(50)
   nome_medico   String? @db.VarChar(200)
 
@@ -218,7 +218,7 @@ model student_data {
   observacoes_consulta         String? @db.Text
 
   // Dados da entrega de óculos
-  data_entrega_oculos        String? @db.VarChar(20)
+  data_entrega_oculos        DateTime?
   responsavel_entrega_oculos String? @db.VarChar(200)
 
   // Pontuação e status do fluxo

@@ -25,6 +25,18 @@ const ACOMPANHAMENTOS: { key: string; label: string }[] = [
   { key: 'acomp_baixa_visao_central',    label: 'Baixa visão central' },
 ];
 
+// ISO DateTime → DD/MM/YYYY for input display
+const isoToBr = (iso?: string): string => {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+};
+// DD/MM/YYYY → YYYY-MM-DD for API
+const brToIso = (br: string): string => {
+  if (!br || br.length < 10) return br;
+  const [d, m, y] = br.split('/');
+  return `${y}-${m}-${d}`;
+};
+
 const schema = yup.object({
   data_consulta: yup.string().required('Obrigatório'),
   crm_medico:    yup.string().required('Obrigatório'),
@@ -41,7 +53,7 @@ interface Props {
 export const ConsultationForm = ({ student, onSubmit, loading, onCancel }: Props) => {
   const formik = useFormik({
     initialValues: {
-      data_consulta: student.data_consulta ?? '',
+      data_consulta: isoToBr(student.data_consulta),
       crm_medico:    student.crm_medico    ?? '',
       nome_medico:   student.nome_medico   ?? '',
       spot_esferico_od:    student.spot_esferico_od    ?? '',
@@ -88,7 +100,7 @@ export const ConsultationForm = ({ student, onSubmit, loading, onCancel }: Props
       observacoes_consulta:   student.observacoes_consulta   ?? '',
     },
     validationSchema: schema,
-    onSubmit,
+    onSubmit: (values) => onSubmit({ ...values, data_consulta: brToIso(values.data_consulta) }),
   });
 
   const vals = formik.values as Record<string, unknown>;

@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsBoolean, IsDateString, IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UpdateConsultationDto {
-  @ApiProperty({ example: '28/04/2026' }) @IsString() data_consulta: string;
+  @ApiProperty({ example: '2026-04-28', description: 'YYYY-MM-DD' }) @IsDateString() data_consulta: string;
   @ApiProperty({ example: '12345-SP' })   @IsString() crm_medico: string;
   @ApiProperty({ example: 'Dr. Carlos Souza' }) @IsString() nome_medico: string;
 

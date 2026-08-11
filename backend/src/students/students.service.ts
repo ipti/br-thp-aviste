@@ -127,9 +127,10 @@ export class StudentsService {
 
   async updateConsultation(id: number, dto: UpdateConsultationDto, user: JwtPayload): Promise<student_data> {
     await this.findOne(id, user);
+    const { data_consulta, ...rest } = dto;
     return this.prisma.student_data.update({
       where: { id },
-      data: { ...dto, consulta_concluida: true },
+      data: { ...rest, data_consulta: new Date(data_consulta), consulta_concluida: true },
     });
   }
 
@@ -138,10 +139,10 @@ export class StudentsService {
     return this.prisma.student_data.update({
       where: { id },
       data: {
-        data_entrega_oculos: dto.data_entrega_oculos,
+        data_entrega_oculos: new Date(dto.data_entrega_oculos),
         responsavel_entrega_oculos: dto.responsavel_entrega_oculos,
         entrega_oculos_concluida: dto.entrega_oculos_confirmada,
-      } as never,
+      },
     });
   }
 

@@ -4,6 +4,16 @@ import { Input } from '../../../../components/ui/Input';
 import { Button } from '../../../../components/ui/Button';
 import type { Student } from '../../api/studentsApi';
 
+const isoToBr = (iso?: string): string => {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+};
+const brToIso = (br: string): string => {
+  if (!br || br.length < 10) return br;
+  const [d, m, y] = br.split('/');
+  return `${y}-${m}-${d}`;
+};
+
 const schema = yup.object({
   data_entrega_oculos: yup.string().required('Obrigatório'),
   responsavel_entrega_oculos: yup.string().required('Obrigatório'),
@@ -20,12 +30,12 @@ interface Props {
 export const GlassesDeliveryForm = ({ student, onSubmit, loading, onCancel }: Props) => {
   const formik = useFormik({
     initialValues: {
-      data_entrega_oculos: student.data_entrega_oculos ?? '',
+      data_entrega_oculos: isoToBr(student.data_entrega_oculos),
       responsavel_entrega_oculos: student.responsavel_entrega_oculos ?? '',
       entrega_oculos_confirmada: Boolean(student.entrega_oculos_concluida),
     },
     validationSchema: schema,
-    onSubmit,
+    onSubmit: (values) => onSubmit({ ...values, data_entrega_oculos: brToIso(values.data_entrega_oculos) }),
   });
 
   return (

@@ -4,14 +4,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SchoolReportDto } from './dto/general-report-response.dto';
 import { GeneralReportFilterDto } from './dto/general-report-filter.dto';
 
-// Parse DD/MM/YYYY → Date (midnight local)
-function parseBrDate(value: string | null | undefined): Date | null {
-  if (!value) return null;
-  const [d, m, y] = value.split('/');
-  if (!d || !m || !y) return null;
-  return new Date(Number(y), Number(m) - 1, Number(d));
-}
-
 function endOfDay(iso: string): Date {
   const d = new Date(iso);
   d.setHours(23, 59, 59, 999);
@@ -68,9 +60,9 @@ export class ReportsService {
       } else if (field === 'data_triagem') {
         date = s.data_triagem ?? null;
       } else if (field === 'data_consulta') {
-        date = parseBrDate(s.data_consulta);
+        date = s.data_consulta ?? null;
       } else if (field === 'data_entrega_oculos') {
-        date = parseBrDate(s.data_entrega_oculos);
+        date = s.data_entrega_oculos ?? null;
       }
 
       if (!date) return false;

@@ -378,7 +378,7 @@ export const StudentDetailPage = () => {
           ) : student.consulta_concluida ? (
             <div className="consulta-view">
               <div className="detail-section__grid">
-                <FieldRow label="Data"   value={student.data_consulta} />
+                <FieldRow label="Data"   value={student.data_consulta ? new Date(student.data_consulta).toLocaleDateString('pt-BR') : undefined} />
                 <FieldRow label="Médico" value={student.nome_medico} />
                 <FieldRow label="CRM"    value={student.crm_medico} />
                 <FieldRow label="Precisa de óculos" value={student.precisa_oculos === '1' ? 'Sim' : student.precisa_oculos === '0' ? 'Não' : undefined} />
@@ -580,7 +580,7 @@ export const StudentDetailPage = () => {
             />
           ) : student.entrega_oculos_concluida ? (
             <div className="detail-section__grid">
-              <FieldRow label="Data da entrega" value={student.data_entrega_oculos} />
+              <FieldRow label="Data da entrega" value={student.data_entrega_oculos ? new Date(student.data_entrega_oculos).toLocaleDateString('pt-BR') : undefined} />
               <FieldRow label="Responsável" value={student.responsavel_entrega_oculos} />
               <FieldRow label="Confirmado" value={student.entrega_oculos_concluida} />
             </div>
