@@ -123,30 +123,29 @@ export const ReportsDashboard = () => {
 
       {/* Filtro de data */}
       <div className="reports-page__filter-bar">
-        <div className="reports-page__filter-rows">
+        <div className="reports-page__filter-grid">
+          <div className="reports-page__filter-grid-header">
+            <span />
+            <span className="reports-page__filter-col-label">Início</span>
+            <span className="reports-page__filter-col-label">Fim</span>
+          </div>
           {([
-            { label: 'Data de cadastro', start: startDate, end: endDate, setStart: setStartDate, setEnd: setEndDate },
-            { label: 'Data de triagem',  start: triagemStart, end: triagemEnd, setStart: setTriagemStart, setEnd: setTriagemEnd },
-            { label: 'Data de consulta', start: consultaStart, end: consultaEnd, setStart: setConsultaStart, setEnd: setConsultaEnd },
-            { label: 'Data de entrega',  start: entregaStart, end: entregaEnd, setStart: setEntregaStart, setEnd: setEntregaEnd },
+            { label: 'Cadastro',  start: startDate,    end: endDate,      setStart: setStartDate,    setEnd: setEndDate },
+            { label: 'Triagem',   start: triagemStart, end: triagemEnd,   setStart: setTriagemStart, setEnd: setTriagemEnd },
+            { label: 'Consulta',  start: consultaStart,end: consultaEnd,  setStart: setConsultaStart,setEnd: setConsultaEnd },
+            { label: 'Entrega',   start: entregaStart, end: entregaEnd,   setStart: setEntregaStart, setEnd: setEntregaEnd },
           ] as const).map((row) => (
-            <div key={row.label} className="reports-page__filter-row">
+            <div key={row.label} className="reports-page__filter-grid-row">
               <span className="reports-page__filter-row-label">{row.label}</span>
-              <div className="reports-page__filter-date">
-                <label className="reports-page__date-label">Início</label>
-                <input type="date" className="reports-page__date-input"
-                  value={row.start} onChange={(e) => row.setStart(e.target.value)} />
-              </div>
-              <div className="reports-page__filter-date">
-                <label className="reports-page__date-label">Fim</label>
-                <input type="date" className="reports-page__date-input"
-                  value={row.end} min={row.start} onChange={(e) => row.setEnd(e.target.value)} />
-              </div>
+              <input type="date" className="reports-page__date-input"
+                value={row.start} onChange={(e) => row.setStart(e.target.value)} />
+              <input type="date" className="reports-page__date-input"
+                value={row.end} min={row.start} onChange={(e) => row.setEnd(e.target.value)} />
             </div>
           ))}
         </div>
         <div className="reports-page__filter-actions">
-          <Button label="Aplicar filtro" icon="pi pi-filter" size="sm"
+          <Button label="Aplicar" icon="pi pi-filter" size="sm"
             disabled={!anyFilter} onClick={handleApplyFilter} />
           {appliedFilter && (
             <Button label="Limpar" icon="pi pi-times" size="sm"
