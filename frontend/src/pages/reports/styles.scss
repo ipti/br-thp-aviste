@@ -74,16 +74,26 @@
     box-shadow: $shadow-sm;
   }
 
-  &__filter-fields {
+  &__filter-rows {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+    flex: 1;
+  }
+
+  &__filter-row {
     display: flex;
     align-items: flex-end;
     gap: $spacing-3;
     flex-wrap: wrap;
-    flex: 1;
   }
 
-  &__filter-field {
-    min-width: 220px;
+  &__filter-row-label {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-gray-700;
+    min-width: 160px;
+    padding-bottom: 8px;
   }
 
   &__filter-date {

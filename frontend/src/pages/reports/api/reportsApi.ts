@@ -14,8 +14,14 @@ export interface SchoolReport {
 }
 
 export interface ReportFilter {
-  startDate: string; // YYYY-MM-DD
-  endDate: string;   // YYYY-MM-DD
+  startDate?: string;
+  endDate?: string;
+  triagemStart?: string;
+  triagemEnd?: string;
+  consultaStart?: string;
+  consultaEnd?: string;
+  entregaStart?: string;
+  entregaEnd?: string;
 }
 
 export const reportsApi = {

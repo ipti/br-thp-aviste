@@ -15,10 +15,6 @@ export class ReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async generalReport(filter?: GeneralReportFilterDto): Promise<SchoolReportDto[]> {
-    const hasFilter = filter?.startDate && filter?.endDate;
-    const start = hasFilter ? new Date(filter.startDate!) : null;
-    const end   = hasFilter ? endOfDay(filter.endDate!) : null;
-
     const schools = await this.prisma.school.findMany({ orderBy: { name: 'asc' } });
 
     return Promise.all(
@@ -28,9 +24,7 @@ export class ReportsService {
           this.prisma.classroom.count({ where: { school_fk: school.id } }),
         ]);
 
-        const students = hasFilter
-          ? allStudents.filter((s) => s.createdAt >= start! && s.createdAt <= end!)
-          : allStudents;
+        const students = filter ? this.applyFilter(allStudents, filter) : allStudents;
 
         return {
           schoolId: school.id,
@@ -46,6 +40,28 @@ export class ReportsService {
         };
       }),
     );
+  }
+
+  private applyFilter(students: student_data[], f: GeneralReportFilterDto): student_data[] {
+    return students.filter((s) => {
+      if (f.startDate && f.endDate) {
+        const end = endOfDay(f.endDate);
+        if (s.createdAt < new Date(f.startDate) || s.createdAt > end) return false;
+      }
+      if (f.triagemStart && f.triagemEnd) {
+        const end = endOfDay(f.triagemEnd);
+        if (!s.data_triagem || s.data_triagem < new Date(f.triagemStart) || s.data_triagem > end) return false;
+      }
+      if (f.consultaStart && f.consultaEnd) {
+        const end = endOfDay(f.consultaEnd);
+        if (!s.data_consulta || s.data_consulta < new Date(f.consultaStart) || s.data_consulta > end) return false;
+      }
+      if (f.entregaStart && f.entregaEnd) {
+        const end = endOfDay(f.entregaEnd);
+        if (!s.data_entrega_oculos || s.data_entrega_oculos < new Date(f.entregaStart) || s.data_entrega_oculos > end) return false;
+      }
+      return true;
+    });
   }
 
   private countQuestionnaire(students: student_data[]): number {

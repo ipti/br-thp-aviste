@@ -44,20 +44,32 @@ export const ReportsDashboard = () => {
   const [exportingConsult, setExportingConsult] = useState(false);
 
   // Date filter state
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate,    setStartDate]    = useState('');
+  const [endDate,      setEndDate]      = useState('');
+  const [triagemStart, setTriagemStart] = useState('');
+  const [triagemEnd,   setTriagemEnd]   = useState('');
+  const [consultaStart,setConsultaStart]= useState('');
+  const [consultaEnd,  setConsultaEnd]  = useState('');
+  const [entregaStart, setEntregaStart] = useState('');
+  const [entregaEnd,   setEntregaEnd]   = useState('');
   const [appliedFilter, setAppliedFilter] = useState<ReportFilter | undefined>(undefined);
 
-  const filterReady = startDate && endDate && startDate <= endDate;
+  const anyFilter = startDate || triagemStart || consultaStart || entregaStart;
 
   const handleApplyFilter = () => {
-    if (!filterReady) return;
-    setAppliedFilter({ startDate, endDate });
+    const f: ReportFilter = {};
+    if (startDate && endDate)       { f.startDate = startDate; f.endDate = endDate; }
+    if (triagemStart && triagemEnd) { f.triagemStart = triagemStart; f.triagemEnd = triagemEnd; }
+    if (consultaStart && consultaEnd){ f.consultaStart = consultaStart; f.consultaEnd = consultaEnd; }
+    if (entregaStart && entregaEnd) { f.entregaStart = entregaStart; f.entregaEnd = entregaEnd; }
+    setAppliedFilter(Object.keys(f).length ? f : undefined);
   };
 
   const handleClearFilter = () => {
-    setStartDate('');
-    setEndDate('');
+    setStartDate(''); setEndDate('');
+    setTriagemStart(''); setTriagemEnd('');
+    setConsultaStart(''); setConsultaEnd('');
+    setEntregaStart(''); setEntregaEnd('');
     setAppliedFilter(undefined);
   };
 
@@ -111,51 +123,45 @@ export const ReportsDashboard = () => {
 
       {/* Filtro de data */}
       <div className="reports-page__filter-bar">
-        <div className="reports-page__filter-fields">
-          <div className="reports-page__filter-date">
-            <label className="reports-page__date-label">Data inicial</label>
-            <input
-              type="date"
-              className="reports-page__date-input"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </div>
-          <div className="reports-page__filter-date">
-            <label className="reports-page__date-label">Data final</label>
-            <input
-              type="date"
-              className="reports-page__date-input"
-              value={endDate}
-              min={startDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
+        <div className="reports-page__filter-rows">
+          {([
+            { label: 'Data de cadastro', start: startDate, end: endDate, setStart: setStartDate, setEnd: setEndDate },
+            { label: 'Data de triagem',  start: triagemStart, end: triagemEnd, setStart: setTriagemStart, setEnd: setTriagemEnd },
+            { label: 'Data de consulta', start: consultaStart, end: consultaEnd, setStart: setConsultaStart, setEnd: setConsultaEnd },
+            { label: 'Data de entrega',  start: entregaStart, end: entregaEnd, setStart: setEntregaStart, setEnd: setEntregaEnd },
+          ] as const).map((row) => (
+            <div key={row.label} className="reports-page__filter-row">
+              <span className="reports-page__filter-row-label">{row.label}</span>
+              <div className="reports-page__filter-date">
+                <label className="reports-page__date-label">Início</label>
+                <input type="date" className="reports-page__date-input"
+                  value={row.start} onChange={(e) => row.setStart(e.target.value)} />
+              </div>
+              <div className="reports-page__filter-date">
+                <label className="reports-page__date-label">Fim</label>
+                <input type="date" className="reports-page__date-input"
+                  value={row.end} min={row.start} onChange={(e) => row.setEnd(e.target.value)} />
+              </div>
+            </div>
+          ))}
         </div>
         <div className="reports-page__filter-actions">
-          <Button
-            label="Aplicar filtro"
-            icon="pi pi-filter"
-            size="sm"
-            disabled={!filterReady}
-            onClick={handleApplyFilter}
-          />
+          <Button label="Aplicar filtro" icon="pi pi-filter" size="sm"
+            disabled={!anyFilter} onClick={handleApplyFilter} />
           {appliedFilter && (
-            <Button
-              label="Limpar"
-              icon="pi pi-times"
-              size="sm"
-              variant="secondary"
-              onClick={handleClearFilter}
-            />
+            <Button label="Limpar" icon="pi pi-times" size="sm"
+              variant="secondary" onClick={handleClearFilter} />
           )}
         </div>
       </div>
 
       {appliedFilter && (
         <p className="reports-page__filter-active">
-          Período de <strong>{appliedFilter.startDate.split('-').reverse().join('/')}</strong>
-          {' '}até <strong>{appliedFilter.endDate.split('-').reverse().join('/')}</strong>
+          Filtro ativo
+          {appliedFilter.startDate    && <> · Cadastro: <strong>{appliedFilter.startDate.split('-').reverse().join('/')} – {appliedFilter.endDate!.split('-').reverse().join('/')}</strong></>}
+          {appliedFilter.triagemStart && <> · Triagem: <strong>{appliedFilter.triagemStart.split('-').reverse().join('/')} – {appliedFilter.triagemEnd!.split('-').reverse().join('/')}</strong></>}
+          {appliedFilter.consultaStart && <> · Consulta: <strong>{appliedFilter.consultaStart.split('-').reverse().join('/')} – {appliedFilter.consultaEnd!.split('-').reverse().join('/')}</strong></>}
+          {appliedFilter.entregaStart && <> · Entrega: <strong>{appliedFilter.entregaStart.split('-').reverse().join('/')} – {appliedFilter.entregaEnd!.split('-').reverse().join('/')}</strong></>}
         </p>
       )}
 
