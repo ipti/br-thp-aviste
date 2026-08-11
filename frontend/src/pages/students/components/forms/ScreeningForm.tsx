@@ -22,7 +22,13 @@ const SIM_NAO = [
   { label: 'Sim', value: '1' },
 ];
 
+const toInputDate = (iso?: string): string => {
+  if (!iso) return new Date().toISOString().slice(0, 10);
+  return new Date(iso).toISOString().slice(0, 10);
+};
+
 const schema = yup.object({
+  data_triagem: yup.string().required('Obrigatório'),
   acuidade_triagem_direito:  yup.string().oneOf([...ACUIDADE_VALUES]).required('Obrigatório'),
   acuidade_triagem_esquerdo: yup.string().oneOf([...ACUIDADE_VALUES]).required('Obrigatório'),
   test_cover:                yup.string().oneOf([...TESTE_VALUES]).required('Obrigatório'),
@@ -42,6 +48,7 @@ interface Props {
 export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) => {
   const formik = useFormik({
     initialValues: {
+      data_triagem: toInputDate(student.data_triagem),
       acuidade_triagem_direito:  student.acuidade_triagem_direito  ?? '7',
       acuidade_triagem_esquerdo: student.acuidade_triagem_esquerdo ?? '7',
       test_cover:                student.test_cover                ?? '0',
@@ -56,6 +63,27 @@ export const ScreeningForm = ({ student, onSubmit, loading, onCancel }: Props) =
 
   return (
     <form onSubmit={formik.handleSubmit} noValidate className="detail-form">
+      <div className="detail-form__section">
+        <p className="detail-form__section-title">Data da Triagem</p>
+        <div className="detail-form__grid">
+          <div className="ui-input">
+            <label htmlFor="data_triagem" className="ui-input__label">
+              Data da triagem <span className="ui-input__required">*</span>
+            </label>
+            <input
+              id="data_triagem"
+              type="date"
+              className="ui-input__input"
+              value={formik.values.data_triagem}
+              onChange={(e) => formik.setFieldValue('data_triagem', e.target.value)}
+            />
+            {formik.touched.data_triagem && formik.errors.data_triagem && (
+              <span className="ui-input__error">{formik.errors.data_triagem}</span>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="detail-form__section">
         <p className="detail-form__section-title">Acuidade Visual</p>
         <div className="detail-form__grid">

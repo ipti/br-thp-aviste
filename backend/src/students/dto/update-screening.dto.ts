@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsDateString, IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 
 const ACUIDADE = ['1', '2', '3', '4', '5', '6', '7', 'nenhum'] as const;
 
@@ -33,4 +33,9 @@ export class UpdateScreeningDto {
   @IsString()
   @MaxLength(2000)
   observacao_triagem?: string;
+
+  @ApiPropertyOptional({ description: 'Data da triagem (YYYY-MM-DD)' })
+  @IsOptional()
+  @IsDateString()
+  data_triagem?: string;
 }
