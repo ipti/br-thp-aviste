@@ -1,4 +1,5 @@
-import { IsDateString, IsOptional } from 'class-validator';
+import { IsDateString, IsInt, IsArray, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class GeneralReportFilterDto {
@@ -13,4 +14,11 @@ export class GeneralReportFilterDto {
 
   @ApiPropertyOptional({ description: 'YYYY-MM-DD' }) @IsOptional() @IsDateString() entregaStart?: string;
   @ApiPropertyOptional({ description: 'YYYY-MM-DD' }) @IsOptional() @IsDateString() entregaEnd?: string;
+
+  @ApiPropertyOptional({ type: [Number], description: 'IDs das escolas' })
+  @IsOptional()
+  @Transform(({ value }) => (Array.isArray(value) ? value.map(Number) : value ? [Number(value)] : undefined))
+  @IsArray()
+  @IsInt({ each: true })
+  schoolIds?: number[];
 }

@@ -9,6 +9,8 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Select } from '../../components/ui/Select';
 import { Modal } from '../../components/ui/Modal';
+import { FormField } from '../../components/ui/FormField';
+import { MultiSelect } from 'primereact/multiselect';
 import type { DocumentProps } from '@react-pdf/renderer';
 import { GeneralReportPDF } from './components/pdf/GeneralReportPDF';
 import { ConsultationsReportPDF } from './components/pdf/ConsultationsReportPDF';
@@ -53,17 +55,19 @@ export const ReportsDashboard = () => {
   const [consultaEnd,  setConsultaEnd]  = useState('');
   const [entregaStart, setEntregaStart] = useState('');
   const [entregaEnd,   setEntregaEnd]   = useState('');
+  const [selectedSchoolIds, setSelectedSchoolIds] = useState<number[]>([]);
   const [appliedFilter, setAppliedFilter] = useState<ReportFilter | undefined>(undefined);
   const [showFilterModal, setShowFilterModal] = useState(false);
 
-  const anyFilter = startDate || triagemStart || consultaStart || entregaStart;
+  const anyFilter = startDate || triagemStart || consultaStart || entregaStart || selectedSchoolIds.length > 0;
 
   const handleApplyFilter = () => {
     const f: ReportFilter = {};
-    if (startDate && endDate)       { f.startDate = startDate; f.endDate = endDate; }
-    if (triagemStart && triagemEnd) { f.triagemStart = triagemStart; f.triagemEnd = triagemEnd; }
+    if (startDate && endDate)        { f.startDate = startDate; f.endDate = endDate; }
+    if (triagemStart && triagemEnd)  { f.triagemStart = triagemStart; f.triagemEnd = triagemEnd; }
     if (consultaStart && consultaEnd){ f.consultaStart = consultaStart; f.consultaEnd = consultaEnd; }
-    if (entregaStart && entregaEnd) { f.entregaStart = entregaStart; f.entregaEnd = entregaEnd; }
+    if (entregaStart && entregaEnd)  { f.entregaStart = entregaStart; f.entregaEnd = entregaEnd; }
+    if (selectedSchoolIds.length)    { f.schoolIds = selectedSchoolIds; }
     setAppliedFilter(Object.keys(f).length ? f : undefined);
     setShowFilterModal(false);
   };
@@ -73,9 +77,11 @@ export const ReportsDashboard = () => {
     setTriagemStart(''); setTriagemEnd('');
     setConsultaStart(''); setConsultaEnd('');
     setEntregaStart(''); setEntregaEnd('');
+    setSelectedSchoolIds([]);
     setAppliedFilter(undefined);
     setShowFilterModal(false);
   };
+
 
   const { data: generalData = [], isLoading: loadingGeneral } = useQuery({
     queryKey: ['reports', 'general', appliedFilter],
@@ -156,6 +162,11 @@ export const ReportsDashboard = () => {
                 Entrega: {appliedFilter.entregaStart.split('-').reverse().join('/')} – {appliedFilter.entregaEnd!.split('-').reverse().join('/')}
               </span>
             )}
+            {appliedFilter.schoolIds?.map((id) => (
+              <span key={id} className="reports-page__filter-chip">
+                {schools.find((s) => s.id === id)?.name ?? `Escola ${id}`}
+              </span>
+            ))}
             <button className="reports-page__filter-clear" onClick={handleClearFilter} title="Remover todos os filtros">
               <i className="pi pi-times" />
             </button>
@@ -197,6 +208,21 @@ export const ReportsDashboard = () => {
             </div>
           ))}
         </div>
+
+        {schools.length > 0 && (
+          <div className="reports-page__filter-schools">
+            <FormField label="Escolas">
+              <MultiSelect
+                value={selectedSchoolIds}
+                onChange={(e) => setSelectedSchoolIds(e.value as number[])}
+                options={schools.map((s) => ({ label: s.name, value: s.id }))}
+                placeholder="Todas as escolas"
+                display="chip"
+                style={{ width: '100%' }}
+              />
+            </FormField>
+          </div>
+        )}
       </Modal>
 
       {/* KPIs */}

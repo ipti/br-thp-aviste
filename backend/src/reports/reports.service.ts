@@ -15,7 +15,10 @@ export class ReportsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async generalReport(filter?: GeneralReportFilterDto): Promise<SchoolReportDto[]> {
-    const schools = await this.prisma.school.findMany({ orderBy: { name: 'asc' } });
+    const schools = await this.prisma.school.findMany({
+      where: filter?.schoolIds?.length ? { id: { in: filter.schoolIds } } : undefined,
+      orderBy: { name: 'asc' },
+    });
 
     return Promise.all(
       schools.map(async (school) => {

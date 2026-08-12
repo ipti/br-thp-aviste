@@ -22,6 +22,7 @@ export interface ReportFilter {
   consultaEnd?: string;
   entregaStart?: string;
   entregaEnd?: string;
+  schoolIds?: number[];
 }
 
 export const reportsApi = {

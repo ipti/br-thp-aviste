@@ -157,4 +157,12 @@
     justify-content: flex-end;
     gap: $spacing-2;
   }
+
+  &__filter-schools {
+    margin-top: $spacing-5;
+    padding-top: $spacing-5;
+    padding-bottom: $spacing-2;
+    border-top: 1px solid $color-gray-100;
+  }
+
 }

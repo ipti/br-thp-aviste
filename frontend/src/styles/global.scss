@@ -7,7 +7,6 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
 }
 
 html {
@@ -151,6 +150,35 @@ p {
   &.p-focus {
     box-shadow: 0 0 0 2px rgba($color-brand-primary, 0.2) !important;
     border-color: $color-brand-primary !important;
+  }
+}
+
+.p-multiselect {
+  border-color: $color-gray-300 !important;
+  border-radius: $radius-md !important;
+
+  &.p-focus {
+    box-shadow: 0 0 0 2px rgba($color-brand-primary, 0.2) !important;
+    border-color: $color-brand-primary !important;
+  }
+}
+
+.p-multiselect-panel {
+  border-radius: $radius-md !important;
+  box-shadow: $shadow-md !important;
+
+  .p-multiselect-header {
+    padding: $spacing-2 $spacing-4 !important;
+  }
+
+  .p-multiselect-items {
+    padding: $spacing-1 0 !important;
+  }
+
+  .p-multiselect-item {
+    padding: $spacing-2 $spacing-4 !important;
+    font-size: $font-size-sm !important;
+    gap: $spacing-2 !important;
   }
 }
 

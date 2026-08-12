@@ -13,6 +13,8 @@
 
   .p-dialog-content {
     padding: $spacing-6 !important;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .p-dialog-footer {
