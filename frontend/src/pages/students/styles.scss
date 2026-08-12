@@ -343,6 +343,22 @@
     border-radius: $radius-full;
     padding: 0.2rem 0.75rem;
   }
+
+  &__diag-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-2;
+    margin-bottom: $spacing-1;
+  }
+
+  &__diag-tag {
+    font-size: $font-size-xs;
+    font-weight: 600;
+    color: #0369a1;
+    background: #e0f2fe;
+    border-radius: $radius-full;
+    padding: 0.2rem 0.75rem;
+  }
 }
 
 // ── Checklist ─────────────────────────────────────────────────────────────────
@@ -350,6 +366,14 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: $spacing-2;
+  margin-top: $spacing-3;
+
+  &--inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-1;
+    margin-top: $spacing-3;
+  }
 }
 
 .form-check-item {

@@ -101,6 +101,9 @@ export interface Student {
   diagnostico?: string;
   conduta?: string;
   precisa_oculos?: string;
+  diagnostico_miopia?: boolean;
+  diagnostico_hipermetropia?: boolean;
+  diagnostico_astigmatismo?: boolean;
   acomp_ambliopia?: boolean;
   acomp_retinoblastoma?: boolean;
   acomp_catarata_congenita?: boolean;

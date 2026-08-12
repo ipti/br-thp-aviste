@@ -462,9 +462,16 @@ export const StudentDetailPage = () => {
                 </div>
               )}
 
-              {(student.diagnostico || student.conduta) && (
+              {(student.diagnostico || student.conduta || student.diagnostico_miopia || student.diagnostico_hipermetropia || student.diagnostico_astigmatismo) && (
                 <div className="consulta-view__block">
                   <p className="consulta-view__subtitle">Diagnóstico e Conduta</p>
+                  {(student.diagnostico_miopia || student.diagnostico_hipermetropia || student.diagnostico_astigmatismo) && (
+                    <div className="consulta-view__diag-tags">
+                      {student.diagnostico_miopia        && <span className="consulta-view__diag-tag">Miopia</span>}
+                      {student.diagnostico_hipermetropia && <span className="consulta-view__diag-tag">Hipermetropia</span>}
+                      {student.diagnostico_astigmatismo  && <span className="consulta-view__diag-tag">Astigmatismo</span>}
+                    </div>
+                  )}
                   <div className="detail-section__grid">
                     {student.diagnostico && <FieldRow label="Diagnóstico" value={student.diagnostico} fullWidth />}
                     {student.conduta     && <FieldRow label="Conduta"     value={student.conduta}     fullWidth />}

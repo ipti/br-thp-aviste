@@ -42,6 +42,9 @@ export class UpdateConsultationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() diagnostico?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() conduta?: string;
   @ApiPropertyOptional() @IsOptional() @IsIn(['0', '1']) precisa_oculos?: string;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() diagnostico_miopia?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() diagnostico_hipermetropia?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() diagnostico_astigmatismo?: boolean;
 
   @ApiPropertyOptional() @IsOptional() @IsBoolean() acomp_ambliopia?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsBoolean() acomp_retinoblastoma?: boolean;

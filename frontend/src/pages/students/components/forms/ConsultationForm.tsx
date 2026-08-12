@@ -74,6 +74,9 @@ export const ConsultationForm = ({ student, onSubmit, loading, onCancel }: Props
       diagnostico:    student.diagnostico    ?? '',
       conduta:        student.conduta        ?? '',
       precisa_oculos: student.precisa_oculos ?? '0',
+      diagnostico_miopia:        student.diagnostico_miopia        ?? false,
+      diagnostico_hipermetropia: student.diagnostico_hipermetropia ?? false,
+      diagnostico_astigmatismo:  student.diagnostico_astigmatismo  ?? false,
       acomp_ambliopia:              student.acomp_ambliopia              ?? false,
       acomp_retinoblastoma:         student.acomp_retinoblastoma         ?? false,
       acomp_catarata_congenita:     student.acomp_catarata_congenita     ?? false,
@@ -210,6 +213,20 @@ export const ConsultationForm = ({ student, onSubmit, loading, onCancel }: Props
             value={formik.values.precisa_oculos}
             onChange={(v) => formik.setFieldValue('precisa_oculos', v)}
             options={SIM_NAO} />
+        </div>
+        <div className="form-checklist form-checklist--inline">
+          {([
+            { key: 'diagnostico_miopia',        label: 'Miopia' },
+            { key: 'diagnostico_hipermetropia', label: 'Hipermetropia' },
+            { key: 'diagnostico_astigmatismo',  label: 'Astigmatismo' },
+          ] as const).map(({ key, label }) => (
+            <label key={key} className="form-check-item">
+              <input type="checkbox"
+                checked={(vals[key] as boolean) ?? false}
+                onChange={(e) => formik.setFieldValue(key, e.target.checked)} />
+              {label}
+            </label>
+          ))}
         </div>
         <div className="detail-form__grid detail-form__grid--full">
           {ta('diagnostico', 'Diagnóstico')}

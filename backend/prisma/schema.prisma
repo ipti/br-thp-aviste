@@ -197,9 +197,12 @@ model student_data {
   motilidade_ocular String? @db.Text
 
   // Consulta — Diagnóstico e conduta
-  diagnostico    String? @db.Text
-  conduta        String? @db.Text
-  precisa_oculos String? @db.VarChar(1) // "0"=não | "1"=sim
+  diagnostico               String? @db.Text
+  conduta                   String? @db.Text
+  precisa_oculos            String? @db.VarChar(1) // "0"=não | "1"=sim
+  diagnostico_miopia        Boolean @default(false)
+  diagnostico_hipermetropia Boolean @default(false)
+  diagnostico_astigmatismo  Boolean @default(false)
 
   // Consulta — Acompanhamento
   acomp_ambliopia              Boolean @default(false)
